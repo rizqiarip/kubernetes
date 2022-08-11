@@ -12,7 +12,7 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Memperbarui paket
   
-  ```
+  ```console
   sudo apt update 
   
   sudo apt upgrade -y 
