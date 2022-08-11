@@ -12,7 +12,12 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Memperbarui paket
   
-  `sudo apt update` `sudo apt upgrade -y` `sudo apt autoremove -y`
+  ```sudo apt update 
+  
+  sudo apt upgrade -y 
+  
+  sudo apt autoremove -y
+  ```
   
   - Instal paket docker
   
