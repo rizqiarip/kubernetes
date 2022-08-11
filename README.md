@@ -294,82 +294,20 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
 
 ## Membuat Dynamic Storage Class dengan NFS
 
-  - Instalasi NFS pada node masterFirst lets install NFS server on the host machine, and create a directory where our NFS server will serve the files:
-$ sudo systemctl status nfs-server
-$ sudo apt install nfs-kernel-server nfs-common portmap
-$ sudo start nfs-server
-$ mkdir -p /srv/nfs/mydata 
-$ chmod -R 777 nfs/ # for simple use but not advised
-Exporting our directory, note that this is an insecure configuration do no use in production:
-
-$ sudo vi /etc/exports
-/srv/nfs/mydata  *(rw,sync,no_subtree_check,no_root_squash,insecure)
-$ sudo exportfs -rv
-exporting *:/srv/nfs/mydata
-$ showmount -e
-/srv/nfs/mydata  *
-Login to the kubernetes cluster, in this case minikube, user: docker; passwd: tcuser, making sure that minikube can ping the localhost and mounting the NFS server in minikube:
-
-$ kubectl get nodes
-$ minikube ip
-192.168.99.157
-$ ssh docker@192.168.99.157
-# ping localhostip
-$ showmount 192.168.1.7
-Hosts on 192.168.1.7:
-$ mount -t nfs 192.168.1.7:/srv/nfs/mydata /mnt
-$ mount | grep mydata
-192.168.1.7:/srv/nfs/mydata on /mnt type nfs4
-$ exit
-2. Now lets create an NFS persistence volume storage class, nfs.yaml:
-
-
-Deploying nfs.yaml:
-
-$ kubectl apply -f nfs.yaml
-$ kubectl get pv,pvc
-persistentvolume/nfs-pv   100Mi      RWX            Retain           Available
-3. Creating persistence volume claim file and deploying it. The accessModes must be the same as the persistence volume that it needs to access:
-
-
-$ kubectl apply -f nfs_pvc.yaml
-$ kubectl get pvc,pv
-persistentvolumeclaim/nfs-pvc   Bound    nfs-pv   100Mi      RWX
-4. Lets create a pod to access this pvc using a simple Nginx deployment. The most important line is the claimName which must be the same as the persistence volume claim that the application will use:
-
-
-Deploying Nginx:
-
-$ kubectl apply -f nfs_pod.yaml 
-$ kubectl get po
-nfs-nginx-6cb55d48f7-q2bvd   1/1     Running
-5. Testing
-
-Creating a test.html in the Nginx pod:
-
-$ kubectl exec -it nfs-nginx-6cb55d48f7-q2bvd bash
-$ sudo vi /usr/share/nginx/html/test.html
-<h1. this should hopefully work</h1>
-Verifying that the host machine has now the same file and verifying that Nginx can read the file:
-
-$ ls /srv/nfs/mydata$
-$ cat /srv/nfs/mydata/test.html
-<h1>this should hopefully work</h1>
-$ kubectl expose deploy nfs-nginx --port 80 --type NodePort
-$ kubectl get svc
-$ nfs-nginx    NodePort    10.102.226.40   <none>        80:32669/TCP
-Open the browser and input minikubeIP:32669:
-
-
-Deleting everything and verifying that the test file is still saved in on our directory:
-
-$ kubectl delete deploy nfs-nginx
-$ kubectl delete pvc nf-pvc
---> kubectl delete svc nfs-nginx
-$ ls /srv/nfs/mydata/
-test.html
+  - 
 
 ## Deploy Aplikasi Wordpress + DB (Mengunakan PVC)
+
+  - Mengunduh file untuk deployment mysql dan wordpress dari situs [kubernetes.io](http://yusufsyaifudin.github.io/indonesia-ner/doc/api)
+  
+  ```console
+  
+  - as
+  - das
+  - da
+  - s
+  - da
+  - 
 
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
 
