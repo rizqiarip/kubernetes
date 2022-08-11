@@ -113,7 +113,49 @@ Dokumentasi Lab Kubernetes Orchestration Container
   kubectl get nodes
   ```
   
-## Instalasi dan konfigurasi Ingress Controller dengan Nginx
+## Instalasi dan konfigurasi Ingress Controller Nginx
+  - Mengunduh file deploy Nginx Ingress Controller
+  
+  ```console
+  wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml
+  ```
+
+  - Menambahkan parameter `--watch-ingress-without-class=true` pada file deploy.yaml
+  
+  ```
+  containers:
+      - args:
+        - /nginx-ingress-controller
+        - --election-id=ingress-controller-leader
+        - --controller-class=k8s.io/ingress-nginx
+        - --ingress-class=nginx
+        - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
+        - --validating-webhook=:8443
+        - --validating-webhook-certificate=/usr/local/certificates/cert
+        - --validating-webhook-key=/usr/local/certificates/key
+        - --watch-ingress-without-class=true
+  ```
+  
+  - Mendeploy Nginx Ingress Controller melalui file deploy.yaml
+  
+  ```console
+  kubectl apply -f deploy.yaml
+  ```
+
+  - Memverifikasi Nginx Ingress Controller
+  
+  ```
+  kubectl get pod -n ingress-nginx
+  kubectl -n ingress-nginx get service
+  ```
+  
+  
+  - Membuat ingress rewrite
+  - 
+
+
+
+
 
 ## Membuat Dynamic Storage Class dengan NFS
 
