@@ -1,6 +1,6 @@
 # Kubernetes Orchestration Container Documentation
 
-Dokumentasi Lab Kubernetes Orchestration Container
+Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 Agustus 2022
 
 ## Topologi Arsitektur Kubernetes
   
@@ -144,13 +144,71 @@ Dokumentasi Lab Kubernetes Orchestration Container
 
   - Memverifikasi Nginx Ingress Controller
   
-  ```
+  ```console
   kubectl get pod -n ingress-nginx
   kubectl -n ingress-nginx get service
   ```
   
+  - Membuat 2 deployment nginx dan apache
   
-  - Membuat ingress rewrite
+  ```console
+  kubectl create deployment nginx-tes --image nginx
+  kubectl create deployment apache-tes --image httpd
+  ```
+  
+  - Memverifikasi deployment
+  
+  ```console
+  kubectl get deployment
+  ```
+  
+  - Ekspos deployment
+  
+  ```console
+  kubectl expose deployment nginx-tes --port 80
+  kubectl expose deployment apache-tes --port 80
+  ```
+  
+  - Memverifikasi service
+  
+  ```console
+  kubectl get service
+  ```
+  - Membuat ingress dari file ingress-arip.yaml dengan isi file sebagai berikut:
+  
+  ```
+  sudo nano ingress-arip.yaml
+  
+    apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: rewrite
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
+  spec:
+    rules:
+      - host: nginx-tes.arip
+        http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: nginx-tes
+                  port:
+                   number: 80
+      - host: apache-tes.arip
+        http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: apache-tes
+                  port:
+                    number: 80
+  ```
+  
   - 
 
 
