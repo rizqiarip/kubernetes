@@ -32,9 +32,13 @@ Dokumentasi Lab Kubernetes Orchestration Container
 
   `sudo apt install -y apt-transport-https; curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -`
 
+  - Menambahkan repository kubectl, kubelet dan kubeadm
+  
   `echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > kubernetes.list`
 
   `sudo mv kubernetes.list /etc/apt/sources.list.d/kubernetes.list`
+  
+  - Memperbarui paket dan menginstal kubectl, kubelet dan kubeadm
   
   `sudo apt update; sudo apt install -y kubectl kubelet kubeadm`
   
