@@ -507,6 +507,91 @@ spec:
 
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
   
-  - Menginstal MetalLB manifest
-## Deploy Aplikasi Nginx dengan ekspose akses Load Balancer
+  - Mengunduh file konfigurasi metallb dari situs [raw.githubusercontent.com](raw.githubusercontent.com)
+
+  ```console
+  wget https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
+  wget https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
+  ```
+  
+  - Menginstal metallb versi 0.12.1 menggunakan file metallb-native.yaml
+  
+  ```console
+  kubectl apply -f namespace.yaml
+  kubectl apply -f metallb.yaml
+  ```
+  
+  - Memverifikasi namespace metallb
+  
+  ```
+  kubectl get namespace
+  kubectl get all --namespace metallb-system
+  ```
+  
+  - Membuat file konfigurasi configmap bernama metallb-cm.yaml dengan isi sebagai berikut:
+  
+  ```
+  apiVersion: v1
+kind: configMap
+metadata:
+  name: config
+  namespace: metallb-system
+data:  
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - range ip ( 10.1.1 - 10.1.100 ) sesuai network
+  ```
+  
+  - Membuat resource configmap dari file metallb-cm.yaml
+
+  ```console
+  kubectl create -f metallb-cm.yaml
+  ```
+   
+## Deploy Aplikasi Nginx dengan ekspos akses Load Balancer
+
+  - Membuat deployment nginx
+  
+  ```console
+  kubectl create deploy nginx --image nginx
+  ```
+  
+  - Memverifikasi pod nginx
+
+  ```console
+  kubectl get pod
+  ```
+  
+  - Ekspos deployment nginx dengan tipe loadbalancer
+
+  ```console
+  kubectl expose deploy nginx --port 80 --type LoadBalancer
+  ```
+  
+  - Memastikan bahwa ip eksternal dari service nginx diambil dari loadbalancer metallb
+
+  ```console
+  kubectl get svc
+  ```
+  
+  - Testing nginx menggunakan browser menggunakan ip dari loadbalancer
+
+  GAMBAR BROWSING IP NGINX LOAD BALANCER
+  
+  
+  
+  ==========================================================================================
+  
+  
+
+
+
+
+
+
+
+
 
