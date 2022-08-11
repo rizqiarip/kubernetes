@@ -298,11 +298,22 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
 
 ## Deploy Aplikasi Wordpress + DB (Mengunakan PVC)
 
-  - Mengunduh file untuk deployment mysql dan wordpress dari situs [kubernetes.io](http://yusufsyaifudin.github.io/indonesia-ner/doc/api)
+  - Mengunduh file untuk deployment mysql dan wordpress dari situs [kubernetes.io](kubernetes.io)
   
   ```console
+  wget https://kubernetes.io/examples/application/wordpress/mysql-deployment.yaml
+  wget https://kubernetes.io/examples/application/wordpress/wordpress-deployment.yaml
+  ```
   
-  - as
+  - Membuat file kustomization.yaml dengan isi sebagai berikut:
+  
+  ```
+  secretGenerator:
+  - name: mysql-pass
+  literals:
+  - password=123456
+  ```
+  
   - das
   - da
   - s
