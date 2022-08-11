@@ -153,7 +153,7 @@ oleh Rizqi Arif Wibowo - 11 Agustus 2022
   
   - Memastikan bahwa pod berjalan dengan baik
   
-  ```
+  ```console
   kubectl log -n ingress-nginx (nama pod)
   ```
   
@@ -276,18 +276,26 @@ oleh Rizqi Arif Wibowo - 11 Agustus 2022
   IP-MASTER-LOCAL nginx-tes.arip apache-tes.arip
   ```
   
-  - Tunneling agar dapat mengakses domain menggunakan *command prompt*
+  - Tunneling menggunakan *command prompt* agar dapat mengakses domain
   
   ```console
-  ssh 
+  ssh -D [sock] arip.id
   ```
   
-  - 
+  - Mengubah pengaturan proxy pada mozilla yang akan digunakan untuk mengakses domain
+  
+  GAMBAR PENGATURAN PROXY MOZILLA
+  
+  - Akses domain nginx-tes.arip
+  
+  GAMBAR AKSES NGINX
+  
+  - Akses domain apache-tes.arip
 
-
-
+  GAMBAR AKSES APACHE
 
 ## Membuat Dynamic Storage Class dengan NFS
+
 
 ## Deploy Aplikasi Wordpress + DB (Mengunakan PVC)
 
