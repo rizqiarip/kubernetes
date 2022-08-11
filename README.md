@@ -42,7 +42,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   sudo apt install -y apt-transport-https; curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   ```
 
-  - Menambahkan repository kubectl, kubelet dan kubeadm
+  - Menambahkan repositori kubectl, kubelet dan kubeadm
   
   ```console
   echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > kubernetes.list
@@ -149,6 +149,12 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   kubectl -n ingress-nginx get service
   ```
   
+  - Memastikan bahwa pod berjalan dengan baik
+  
+  ```
+  kubectl log -n ingress-nginx (nama pod)
+  ```
+  
   - Membuat 2 deployment nginx dan apache
   
   ```console
@@ -174,16 +180,14 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   ```console
   kubectl get service
   ```
-  - Membuat ingress dari file ingress-arip.yaml dengan isi file sebagai berikut:
   
-  ```
-  ```console
-  sudo nano ingress-arip.yaml
+  - Membuat file ingress-arip.yaml dengan isi file sebagai berikut:
+  
   ```
     apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
-    name: rewrite
+    name: ingress-nginx
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
   spec:
@@ -210,8 +214,73 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
                     number: 80
   ```
   
-  - 
+  - Membuat ingress dari file ingress-arip.yaml
 
+  ```console
+  kubectl create -f ingress-arip.yaml
+  ```
+  
+  - Memverifikasi ingress
+  
+  ```console
+  kubectl get ingress
+  ```
+  
+  - Melihat service dari semua namespace
+  
+  ```console
+  kubectl get svc --all-namespaces
+  ```
+  
+  - Mengubah service ingress-nginx-controller dengan editor nano
+  
+  ```console
+  KUBE_EDITOR="nano" kubectl edit svc -n ingress-nginx ingress-nginx-controller
+  ```
+  
+  - Menambahkan ip node master sebagai ip eksternal
+  
+  ```
+    selector:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: ingress-nginx
+      app.kubernetes.io/name: ingress-nginx
+    externalIPs:
+    - IP-MASTER-LOCAL
+  ```
+  
+  ### Testing
+  
+  **Linux**
+  
+  - Tambahkan baris baru di /etc/hosts
+  
+  ```
+  IP-MASTER-LOCAL nginx-tes.arip apache-tes.arip
+  ```
+  
+  - Akses menggunakan `curl`
+  
+  ```console
+  curl nginx-tes.arip
+  curl apache-tes.arip
+  ```
+   
+  **Windows**
+  
+  - Tambahkan baris baru pada file host di direktori C:\Windows\System32\Drivers\etc\hosts, ubah file menggunakan notepad dengan izin administrator
+  
+  ```
+  IP-MASTER-LOCAL nginx-tes.arip apache-tes.arip
+  ```
+  
+  - Tunneling agar dapat mengakses domain menggunakan *command prompt*
+  
+  ```console
+  ssh 
+  ```
+  
+  - 
 
 
 
