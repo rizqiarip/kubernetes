@@ -177,8 +177,9 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   - Membuat ingress dari file ingress-arip.yaml dengan isi file sebagai berikut:
   
   ```
+  ```console
   sudo nano ingress-arip.yaml
-  
+  ```
     apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
