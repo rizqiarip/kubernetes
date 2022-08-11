@@ -296,31 +296,217 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
 
   - 
 
-## Deploy Aplikasi Wordpress + DB (Mengunakan PVC)
+## Deploy Aplikasi Wordpress dan MySQL menggunakan Persistent Volume Claim (PVC)
 
-  - Mengunduh file untuk deployment mysql dan wordpress dari situs [kubernetes.io](kubernetes.io)
-  
-  ```console
-  wget https://kubernetes.io/examples/application/wordpress/mysql-deployment.yaml
-  wget https://kubernetes.io/examples/application/wordpress/wordpress-deployment.yaml
-  ```
-  
-  - Membuat file kustomization.yaml dengan isi sebagai berikut:
+  - Membuat file bernama kustomization.yaml untuk menyimpan password database
   
   ```
   secretGenerator:
   - name: mysql-pass
-  literals:
-  - password=123456
+    literals:
+    - password=arip123
   ```
   
-  - das
-  - da
-  - s
-  - da
-  - 
+  - Membuat file yang berisi konfigurasi untuk menambahkan resource service, pvc, dan deployment MySQL dengan file bernama mysql-deployment.yaml, variabel `MYSQL_ROOT_PASSWORD` mengambil password atau kata sandi dari secretGenerator dengan nama mysql-pass
+    
+  ```
+  apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress #label
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+  ```
+  
+  - Membuat file yang berisi konfigurasi untuk menambahkan resource service, pvc, dan deployment Wordpress dengan file bernama wordpress-deployment.yaml, direktori persistent volume diarahkan pada `/var/www/html`
+  
+  ```
+  apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-pv-claim
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wp-pv-claim
+  ```
+  
+  - Menambahkan parameter resource berisi nama file konfigurasi yang telah dibuat
+  
+  ```
+  resources:
+    - mysql-deployment.yaml
+    - wordpress-deployment.yaml
+  ```
+  
+  - Mengaplikasikan situs wordpress dan database mysql
+  
+  ```console
+  kubectl apply -k ./
+  ```
+  
+  - Memverifikasi resource secrets yang menyimpan kata sandi atau password
+  
+  ```console
+  kubectl get secrets
+  ```
+  
+  - Memverifikasi resource persistent volume claim
+  
+  ```console
+  kubectl get secrets
+  ```
+  
+  - Memverifikasi resource pods
+  
+  ```console
+  kubectl get secrets
+  ```
+  
+  - Memverifikasi resource service wordpress
+  
+  ```console
+  kubectl get secrets
+  ```
+  
+  - Melihat url wordpress melalui service wordpress
+  
+  ```console
+  kubectl get secrets
+  ```
+  
+  - Testing wordpress menggunakan perintah curl
+  
+  ```console
+  curl (url) atau (ip:port)
+  ```
+  
+  - Testing wordpress melalui browser mozilla
+  
+  GAMBAR DASHBOARD WORDPRESS
+  
+  - aaaa
 
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
-
+  
+  - Menginstal MetalLB manifest
 ## Deploy Aplikasi Nginx dengan ekspose akses Load Balancer
 
