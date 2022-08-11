@@ -1,14 +1,13 @@
-# Kubernetes Orchestration Container Documentation
+# Kubernetes Orchestration 
+# Container Documentation
 
-Dokumentasi Lab Kubernetes Orchestration Container 
-
-oleh Rizqi Arif Wibowo - 11 Agustus 2022
+Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 Agustus 2022
 
 ## Topologi Arsitektur Kubernetes
   
   Gambar topologi arsitektur kubernetes
 
-## Instalasi Kubernetes Cluster, 1 Master dan 1 Worker
+## Instalasi Kubernetes Cluster
 
   Eksekusi perintah pada node master dan worker
   
