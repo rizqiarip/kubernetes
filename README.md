@@ -22,7 +22,7 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Instal paket docker
   
-  ```
+  ```console
   sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software properties-common -y
   
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -38,20 +38,20 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Instal kubectl, kubelet dan kubeadm
 
-  ```
+  ```console
   sudo apt install -y apt-transport-https; curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   ```
 
   - Menambahkan repository kubectl, kubelet dan kubeadm
   
-  ```
+  ```console
   echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' > kubernetes.list
 
   sudo mv kubernetes.list /etc/apt/sources.list.d/kubernetes.list
   ```
   - Memperbarui paket dan menginstal kubectl, kubelet dan kubeadm
   
-  ```
+  ```console
   sudo apt update; sudo apt install -y kubectl kubelet kubeadm
   
   apt-mark hold kubelet kubeadm kubectl
@@ -61,7 +61,7 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Inisialisasi kubeadm
   
-  ```
+  ```console
   swapon -s
   
   sudo swapoff -a
@@ -71,7 +71,7 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Menyalin konfigurasi admin dari direktori kubernetes
   
-  ```
+  ```console
   mkdir -p $HOME/.kube
   
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -81,7 +81,7 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Memverifikasi config dan cluster
   
-  ```
+  ```console
   kubectl config view
   
   kubectl cluster-info
@@ -91,13 +91,15 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Menampilkan token dan token-ca-cert-hash (eksekusi perintah di node master)
   
-  `sudo kubeadm token list`
+  ```console
+  sudo kubeadm token list
   
-  `sudo openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'`
+  sudo openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  ```
   
   - Memasukkan node worker ke dalam cluster (eksekusi perintah di node worker)
   
-  ```
+  ```console
   swapon -s
   
   sudo swapoff -a
@@ -107,7 +109,7 @@ Dokumentasi Lab Kubernetes Orchestration Container
   
   - Memverifikasi jika node worker sudah bergabung ke dalam cluster kubernetes (eksekusi perintah di node master)
   
-  ```
+  ```console
   kubectl get nodes
   ```
   
