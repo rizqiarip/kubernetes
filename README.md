@@ -287,7 +287,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   kubectl apply -f ingress-arip.yaml
   ```
   
-  - Mengecek ip `ingress-arip`
+  - Mengecek ip `ingress`
   
   ```console
   kubectl get ingress
@@ -297,8 +297,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
 
   - Menambahkan baris baru pada `/etc/hosts` agar dapat mengenali domain
   
-    ```console
-  sudo nano /etc/hosts
+  ```
   192.168.39.134 nginx.arip apache.arip
   ```
   
@@ -330,7 +329,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   - Membuat file yang berisi konfigurasi untuk menambahkan resource service, pvc, dan deployment MySQL dengan file bernama mysql-deployment.yaml, variabel `MYSQL_ROOT_PASSWORD` mengambil password atau kata sandi dari secretGenerator dengan nama mysql-pass
     
   ```
-  apiVersion: v1
+apiVersion: v1
 kind: Service
 metadata:
   name: wordpress-mysql
@@ -400,7 +399,7 @@ spec:
   - Membuat file yang berisi konfigurasi untuk menambahkan resource service, pvc, dan deployment Wordpress dengan file bernama wordpress-deployment.yaml, direktori persistent volume diarahkan pada `/var/www/html`
   
   ```
-  apiVersion: v1
+apiVersion: v1
 kind: Service
 metadata:
   name: wordpress
@@ -466,7 +465,6 @@ spec:
       volumes:
       - name: wordpress-persistent-storage
         persistentVolumeClaim:
-          claimName: wp-pv-claim
   ```
   
   - Menambahkan parameter resource berisi nama file konfigurasi yang telah dibuat
@@ -492,19 +490,19 @@ spec:
   - Memverifikasi resource persistent volume claim
   
   ```console
-  kubectl get secrets
+  kubectl get pvc
   ```
   
   - Memverifikasi resource pods
   
   ```console
-  kubectl get secrets
+  kubectl get pod
   ```
   
   - Memverifikasi resource service wordpress
   
   ```console
-  kubectl get secrets
+  kubectl get svc
   ```
   
   - Melihat url wordpress melalui service wordpress
