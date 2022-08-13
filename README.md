@@ -313,7 +313,78 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
 Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/] (https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
 ## Membuat Dynamic Storage Class dengan NFS
 
+  - Menginstal NFS dan membuat direktori dimana nfs menyimpan file
+  
+  ```console
+  ```
+  
+  - Mengekspor direktori
+  
+  ```console
+  ```
+  
+  - Memverifikasi minikube dapat melakukan `ping` ke localhost dan me *mounting* nfs di minikube dengan ssh
+  
+  ```console
+  ```
+  
+  - Membuat file bernama nfs.yaml untuk membuat `persistence volume`
+  
+  ```console
+  ```
+  
+  - Mendeploy dan memverifikasi `persistent volume` nfs 
+  
+  ```console
+  ```
+  
+  - Membuat file bernama nfs_pvc.yaml untuk membuat `persistence volume claim` 
+  
+  ```console
+  ```
+  
+  - Mendeploy dan memverifikasi `persisten volume claim` nfs
+  
+  ```console
+  ```
+  
+  - Membuat `pod` untuk akses `pvc` menggunakan deployment nginx
+  
+  ```console
+  ```
+  
+  - Mendeploy dan memverifikasi `pod`
+  
+  ```console
+  ```
+  
+  - Membuat file test.html pada direktori `/usr/share/nginx/html` di dalam container nginx
+  
+  ```console
+  ```
+  
+  - Memverifikasi file test.html diluar container
+  
+  ```console
+  ```
+  
+  - Mengekspos deployment nfs-nginx dengan tipe nodeport dan port 80
+  
+  ```console
+  ```
+  
+  - Memverifikasi service nfs-nginx
+  
+  ```console
+  ```
+  
   - 
+  
+  
+  
+  
+  
+  
 
 ## Deploy Aplikasi Wordpress dan MySQL menggunakan Persistent Volume Claim (PVC)
 
