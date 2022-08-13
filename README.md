@@ -175,7 +175,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184471026-2bfc6230-436a-4caa-9915-eac88249c7d9.png)
 
-  - Mengecek node
+  - Mengecek node yang ada di dalam cluster
 
   ```console
   kubectl get nodes
@@ -191,31 +191,6 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   ```
   
   ![image](https://user-images.githubusercontent.com/89076954/184471054-7200b337-2b41-4a9d-bd1a-08a5cbcf6f90.png)
-
-  - Melihat daftar addons pada `minikube`
-
-  ```console
-  minikube addons list
-  ```
-  
-  ![image](https://user-images.githubusercontent.com/89076954/184471068-35f5f652-c7f9-4d36-b95a-e566de799654.png)
-
-  - Mengakses dashboard kubernetes
-
-  ```console
-  minikube dashboard --url
-  ```
-  
-  - Tunneling ke server
-
-
-
-
-
-
-
-
-
 
 
 ## Instalasi dan konfigurasi Ingress Controller Nginx
@@ -241,25 +216,40 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
         - --watch-ingress-without-class=true
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184471496-1acbc144-6275-4399-a937-c850da2b62ed.png)
+
   - Mendeploy Nginx Ingress Controller melalui file deploy.yaml
   
   ```console
   kubectl apply -f deploy.yaml
   ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184471523-c30229f9-f55a-4376-8d20-56b6c7f56438.png)
 
-  - Memverifikasi Nginx Ingress Controller
+  - Mengecek pod
   
   ```console
   kubectl get pod -n ingress-nginx
-  kubectl -n ingress-nginx get service
   ```
   
-  - Memastikan bahwa pod berjalan dengan baik
+  ![image](https://user-images.githubusercontent.com/89076954/184471549-c7cf5580-7325-4bed-b535-dbfce3e98eb2.png)
+  
+  - Mengecek logs pod
   
   ```console
-  kubectl log -n ingress-nginx (nama pod)
+  kubectl logs ingress-nginx-controller-fb9c8d87d-qtqwr -n ingress-nginx
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184471684-1df77e1c-c6f2-48e6-83c7-ae765ce40370.png)
+
+  - Mengecek service
+  
+  ```console
+  kubectl get svc -n ingress-nginx
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184471611-1990419e-562f-4037-ae0e-995be81eafb0.png)
+
   - Membuat 2 deployment nginx dan apache
   
   ```console
