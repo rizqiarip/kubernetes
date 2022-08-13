@@ -58,10 +58,9 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ```console
   docker version
-  ```
-  
+    
   ![image](https://user-images.githubusercontent.com/89076954/184464784-b6ce3408-cd4c-41c5-a53c-67cadda2243d.png)
-
+  ```
   - a
   - a
 
