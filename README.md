@@ -54,16 +54,57 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   newgrp docker
   ```
   
-  - Memastikan versi `docker`
+  - Melihat versi `docker`
   
   ```console
   docker version
-    
-  ![image](https://user-images.githubusercontent.com/89076954/184464784-b6ce3408-cd4c-41c5-a53c-67cadda2243d.png)
   ```
-  - a
-  - a
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184464784-b6ce3408-cd4c-41c5-a53c-67cadda2243d.png)
+  
+  - Melihat versi `docker compose`
+  
+  ```console
+  docker compose version
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184465567-910bf877-6e13-4688-865e-7b0561e699d9.png)
+  
+  -  Mengunduh binary `minikube` dan memindahkan nya ke direktori `/usr/local/bin`
+  
+  ```console
+  wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+  chmod +x minikube-linux-amd64
+  sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+  ```
+  
+  - Mengecek versi `minikube`
 
+  ```console
+  minikube version
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184465776-c4281cee-7773-4a6d-b1fe-33c60d3058a3.png)
+
+  - Menginstal `kubectl` untuk mendeploy dan me *manage* aplikasi kubernetes
+  
+  ```console
+  curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+  ```
+  
+  - Mengubah file `kubectl` dan memindahkan nya ke direktori /usr/local/bin
+  - Memeriksa versi `kubectl`
+  - Menginstal Docker machine driver kvm
+  - Melihat versi `docker-machine-driver-kvm2`
+  - Menambahkan user ke dalam grup `libvirt`
+  - Menjadikan kvm sebagai default driver `minikube`
+  - Menjalankan `minikube`
+  - Melihat `minikube` yang berjalan
+  - Mengecek status cluster
+  - Melihat konfigurasi `minikube` yang berada di direktori ~/.minikube/machines/minikube/config.json
+  - Mengecek node
+  - Mengakses `minikube` menggunakan ssh
+  - Mengaktifkan dashboard kubernetes
 
 
 
