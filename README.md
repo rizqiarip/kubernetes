@@ -6,9 +6,75 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   Gambar topologi arsitektur kubernetes
 
-## Instalasi Kubernetes Cluster
+## Instalasi Minikube menggunakan driver kvm2
 
-asdas
+  - Menginstal KVM, Libvirt dan Qemu
+  
+  ```console
+  sudo apt update
+  sudo apt install -y qemu-kvm libvirt-dev bridge-utils libvirt-daemon-system libvirt-daemon virtinst bridge-utils libosinfo-bin libguestfs-tools virt-top
+  ```
+  - Memuat dan mengaktifkan `modulevhost-net`
+  
+  ```console
+  sudo modprobe vhost_net
+  sudo lsmod | grep vhost
+  echo "vhost_net" | sudo tee -a /etc/modules
+  ```
+  
+  - Menginstal paket untuk mengizinkan `apt` agar dapat menggunakan repositori dari `HTTPS`
+  
+  ```console
+  sudo apt install -y lsb-release gnupg apt-transport-https ca-certificates curl software-properties-common
+  ```
+  
+  - Menambahkan Docker official GPG key
+  
+  ```console
+  curl -fSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/docker.gpg
+  ```
+  
+  - Menambahkan stable repository
+   
+  ```console
+  sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  ```
+  
+  - Menginstal docker ce
+  
+  ```console
+  sudo apt update
+  sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  ```
+  
+  - Memasukan user ke dalam group `docker` agar dapat menggunakan `docker` sebagai non-root
+  
+  ```console
+  sudo usermod -aG docker $USER
+  newgrp docker
+  ```
+  
+  - Memastikan versi `docker`
+  
+  ```console
+  docker version
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184464784-b6ce3408-cd4c-41c5-a53c-67cadda2243d.png)
+
+  - a
+  - a
+
+
+
+
+
+
+
+
+
+
+
 
 ## Instalasi dan konfigurasi Ingress Controller Nginx
   - Mengunduh file deploy Nginx Ingress Controller
