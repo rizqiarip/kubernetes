@@ -310,7 +310,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184493435-7ef951ef-ba33-4b81-8c0b-217ff6b1845f.png)
 
-Credit : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/] (https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
+Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/] (https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
 ## Membuat Dynamic Storage Class dengan NFS
 
   - 
@@ -547,7 +547,7 @@ spec:
   
     ![image](https://user-images.githubusercontent.com/89076954/184496629-cca48431-a2f0-4c61-a639-60cfba5ced2e.png)
 
-Credit : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/](https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/)
+Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/](https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/)
 
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
   
@@ -626,10 +626,35 @@ Credit : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpr
   ![image](https://user-images.githubusercontent.com/89076954/184503689-9ac8b69c-a346-4748-ae85-b0c845992715.png)
 
 
-Credit: https://kubebyexample.com/en/learning-paths/metallb/install
+- Testing tambahan menggunakan deployment `apache` (kondisi yang harusnya terjadi adalah deployment apache mendapatkan ip 192.168.39.151)
   
+  ```console
+  kubectl create deployment apache-metallb --image httpd
+  kubectl expose deployment apache-metallb --type LoadBalancer --port 80
+  ```
   
-  ==========================================================================================
+  ![image](https://user-images.githubusercontent.com/89076954/184504021-64fdf772-295b-48b1-92ea-f15592c4279a.png)
+
+  - Mengecek ip eksternal yang didapat `apache`
+  
+  ```console
+  kubectl get svc apache-metallb
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184504085-6434cf91-f897-4c44-9e33-1851af298b51.png)
+
+  - Tes akses ip load balancer menggunakan curl
+  
+  ```console
+  curl 192.168.39.151
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184504102-e1d9a439-0622-4e09-bd57-6b0fb1ab3574.png)
+
+
+Referensi: https://kubebyexample.com/en/learning-paths/metallb/install
+
+  ===================================================================================
   
   
 
