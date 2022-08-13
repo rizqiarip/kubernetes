@@ -311,74 +311,168 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   ![image](https://user-images.githubusercontent.com/89076954/184493435-7ef951ef-ba33-4b81-8c0b-217ff6b1845f.png)
 
 Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/] (https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
+
 ## Membuat Dynamic Storage Class dengan NFS
 
   - Menginstal NFS dan membuat direktori dimana nfs menyimpan file
   
   ```console
+  sudo apt-get update
+  sudo apt install nfs-kernel-server nfs-common portmap
+  sudo systemctl start nfs-server
+  sudo systemctl status nfs-server
+  mkdir -p /srv/nfs/mydata 
+  chmod -R 777 /srv/nfs/
   ```
   
-  - Mengekspor direktori
+  - Mengekspor direktori dengna menambah baris baru pada file /etc/exports
   
   ```console
+  sudo vi /etc/exports
+  sudo exportfs -rv
+  showmount -e
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184508981-cd19164a-4b74-4725-a27a-476b939d8583.png)
+
   - Memverifikasi minikube dapat melakukan `ping` ke localhost dan me *mounting* nfs di minikube dengan ssh
   
   ```console
+  minikube ip
+  ssh docker@192.168.39.134 (pass: tcuser)
+  mount -t nfs 192.168.1.7:/srv/nfs/mydata /mnt
+  mount | grep mydata
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184509050-ca06950a-a834-415f-9c77-e55499a1cbe2.png)
+
   - Membuat file bernama nfs.yaml untuk membuat `persistence volume`
   
-  ```console
+  ```
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: nfs-pv
+    labels:
+      name: mynfs
+  spec:
+    storageClassName: manual
+    capacity:
+      storage: 200Mi
+    accessModes:
+      - ReadWriteMany
+   nfs:
+      server: 192.168.39.1
+      path: "/srv/nfs/mydata"
   ```
   
   - Mendeploy dan memverifikasi `persistent volume` nfs 
   
   ```console
+  kubectl apply -f nfs.yaml
+  kubectl get pv,pvc
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184509197-1d48f900-78a1-4b0b-a61f-829662f64a73.png)
+
   - Membuat file bernama nfs_pvc.yaml untuk membuat `persistence volume claim` 
   
-  ```console
+  ```
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+   name: nfs-pvc
+  spec:
+    storageClassName: manual
+    accessModes:
+     - ReadWriteMany
+    resources:
+      requests:
+      storage: 50Mi
   ```
   
   - Mendeploy dan memverifikasi `persisten volume claim` nfs
   
   ```console
+  kubectl apply -f nfs_pvc.yaml
+  kubectl get pv,pvc
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184509223-37d637bf-dfa5-40f3-8b1a-4d9954238ff1.png)
+
   - Membuat `pod` untuk akses `pvc` menggunakan deployment nginx
   
-  ```console
+  ```
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      app: nginx
+    name: nfs-nginx
+  spec:
+   replicas: 1
+   selector:
+      matchLabels:
+        app: nginx
+   template:
+      metadata:
+        labels:
+          app: nginx
+      spec:
+        volumes:
+        - name: nfs-test
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+       containers:
+        - image: nginx
+          name: nginx
+          volumeMounts:
+          - name: nfs-test
+            mountPath: /usr/share/nginx/html
   ```
   
   - Mendeploy dan memverifikasi `pod`
   
   ```console
+  kubectl apply -f nfs_pod.yaml
+  kubectl get pod
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184509246-d9784686-577c-4468-8b13-b3bf4bd67141.png)
+
   - Membuat file test.html pada direktori `/usr/share/nginx/html` di dalam container nginx
   
   ```console
+  kubectl exec -it nfs-nginx-5c89779fb6-7z9w7 bash
+  nano /usr/share/nginx/html/test.html
+  semoga berhasil
+  cat /usr/share/nginx/html/test.html
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184509298-bbf774aa-e4b8-47a3-86c0-ce02be0c7298.png)
+
   - Memverifikasi file test.html diluar container
   
   ```console
+  ls /srv/nfs/mydata
+  cat /srv/nfs/mydata/test.html
   ```
   
-  - Mengekspos deployment nfs-nginx dengan tipe nodeport dan port 80
+  ![image](https://user-images.githubusercontent.com/89076954/184509360-f2b098fd-117f-4ba9-a0da-c58af357e857.png)
+
+  - Menghapus semua resource dan mengecek file test.html
   
   ```console
+  kubectl delete deploy nfs-nginx
+  kubectl delete pvc nf-pvc
+  kubectl delete svc nfs-nginx
   ```
   
-  - Memverifikasi service nfs-nginx
-  
-  ```console
-  ```
-  
+  ![image](https://user-images.githubusercontent.com/89076954/184509332-63c5eb2e-68df-458b-8554-f0a5b3a54df8.png)
+
   - 
+  
+  Dynamic NFS provisioning
   
   
   
