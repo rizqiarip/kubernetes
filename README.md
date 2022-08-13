@@ -546,7 +546,9 @@ spec:
   - Tampilan dashboard wordpress
   
     ![image](https://user-images.githubusercontent.com/89076954/184496629-cca48431-a2f0-4c61-a639-60cfba5ced2e.png)
-  
+
+Credit : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/](https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/)
+
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
   
   - Mengunduh file konfigurasi metallb dari situs [raw.githubusercontent.com](raw.githubusercontent.com)
