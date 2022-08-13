@@ -537,15 +537,15 @@ spec:
   
   - Tes akses wordpress dengan memasukan url http://192.168.39.134:32227
   
-    ![image](https://user-images.githubusercontent.com/89076954/184495998-01aa5b5e-89ed-4264-b513-9569b5cad041.png)
+    ![image](https://user-images.githubusercontent.com/89076954/184496342-e4fffde0-f4ce-44db-89ba-f2c59268490a.png)
   
   - Instalasi wordpress
   
-    ![image](https://user-images.githubusercontent.com/89076954/184495951-0d99d9ff-38eb-4277-8641-98c414fda717.png)
+    ![image](https://user-images.githubusercontent.com/89076954/184496359-de4df4aa-3bf1-4df8-9095-f756f66817c7.png)
 
   - Tampilan dashboard wordpress
   
-    ![image](https://user-images.githubusercontent.com/89076954/184496096-e354c9d9-8fc4-4a55-a08e-32f0d74244fd.png)
+    ![image](https://user-images.githubusercontent.com/89076954/184496629-cca48431-a2f0-4c61-a639-60cfba5ced2e.png)
   
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
   
