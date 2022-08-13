@@ -411,7 +411,7 @@ spec:
   selector:
     app: wordpress
     tier: frontend
-  type: LoadBalancer
+  type: NodePort
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -467,7 +467,7 @@ spec:
         persistentVolumeClaim:
   ```
   
-  - Menambahkan parameter resource berisi nama file konfigurasi yang telah dibuat
+  - Menambahkan baris baru berisi nama file deployment pada file `kustomization.yaml`
   
   ```
   resources:
@@ -475,54 +475,78 @@ spec:
     - wordpress-deployment.yaml
   ```
   
-  - Mengaplikasikan situs wordpress dan database mysql
+  - Mengaplikasikan situs `wordpress` dan database `mysql`
   
   ```console
   kubectl apply -k ./
   ```
   
-  - Memverifikasi resource secrets yang menyimpan kata sandi atau password
+  ![image](https://user-images.githubusercontent.com/89076954/184496165-6d698423-02d8-4b8a-85dc-84846556d82d.png)
+
+  - Memverifikasi resource `secrets` yang menyimpan kata sandi atau password
   
   ```console
   kubectl get secrets
   ```
   
-  - Memverifikasi resource persistent volume claim
-  
-  ```console
-  kubectl get pvc
-  ```
-  
-  - Memverifikasi resource pods
-  
-  ```console
-  kubectl get pod
-  ```
-  
+  ![image](https://user-images.githubusercontent.com/89076954/184496177-8b50810b-511d-4cb9-af77-83bb76ed5e68.png)
+
   - Memverifikasi resource service wordpress
   
   ```console
   kubectl get svc
   ```
   
-  - Melihat url wordpress melalui service wordpress
-  
-  ```console
-  kubectl get secrets
-  ```
-  
-  - Testing wordpress menggunakan perintah curl
-  
-  ```console
-  curl (url) atau (ip:port)
-  ```
-  
-  - Testing wordpress melalui browser mozilla
-  
-  GAMBAR DASHBOARD WORDPRESS
-  
-  - aaaa
+  ![image](https://user-images.githubusercontent.com/89076954/184496187-e33eac76-e2ce-491a-994b-f1384afdf600.png)
 
+  - Memverifikasi resource persistent volume claim
+  
+  ```console
+  kubectl get pvc
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184496196-8131973e-8a24-4aa6-a6e9-6395768f3217.png)
+
+  - Memverifikasi resource pods
+  
+  ```console
+  kubectl get pod
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184496212-1e99c238-0c83-4214-9f8f-5b768de7f185.png)
+
+  - Melihat url service wordpress menggunakan perintah `minikube`
+  
+  ```console
+  minikube service wordpress --url
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184496234-cd642ea6-1c5b-4575-9082-dc1ea49719a6.png)
+
+  - Tunneling melalui cmd agar dapat mengakses wordpress
+  
+  ```console
+  ssh 34.121.197.14 -l rizqiarifwibowo19 -D32227
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184495709-cc2b3187-99ba-464f-8266-510d3e24fc9c.png)
+
+  - Atur pengaturan proxy pada mozilla sesuai port yang akan diakses
+  
+    ![image](https://user-images.githubusercontent.com/89076954/184495799-63343c90-acb6-4f48-8159-a7e163abbc2b.png)
+  
+  - Tes akses wordpress dengan memasukan url http://192.168.39.134:32227
+  
+    ![image](https://user-images.githubusercontent.com/89076954/184495998-01aa5b5e-89ed-4264-b513-9569b5cad041.png)
+  
+  - Instalasi wordpress
+  
+    ![image](https://user-images.githubusercontent.com/89076954/184495951-0d99d9ff-38eb-4277-8641-98c414fda717.png)
+
+  - Tampilan dashboard wordpress
+  
+    ![image](https://user-images.githubusercontent.com/89076954/184496096-e354c9d9-8fc4-4a55-a08e-32f0d74244fd.png)
+  
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
   
   - Mengunduh file konfigurasi metallb dari situs [raw.githubusercontent.com](raw.githubusercontent.com)
