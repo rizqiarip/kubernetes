@@ -99,14 +99,16 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   mv kubectl /usr/local/bin
   ```
   
-  
+  ![image](https://user-images.githubusercontent.com/89076954/184470860-1b24bc96-0afc-4b0e-bbeb-4045297b2ed2.png)
+
   - Memeriksa versi `kubectl`
 
   ```console
   kubectl version -o json
   ```
   
-  
+  ![image](https://user-images.githubusercontent.com/89076954/184470872-7f998ca3-6be5-4bea-aef1-7eeae35107fd.png)
+
   - Menginstal Docker machine driver kvm
 
   ```console
@@ -120,13 +122,16 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   sudo mv docker-machine-driver-kvm2 /usr/local/bin
   ```
   
-  
+  ![image](https://user-images.githubusercontent.com/89076954/184470942-c56551d1-910e-451d-ac54-9b780ba6a0ba.png)
+
   - Melihat versi `docker-machine-driver-kvm2`
 
   ```console
   docker-machine-driver-kvm2 version
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184470958-89b6a4f1-3612-42be-97c9-4eee48aaab04.png)
+
   - Menambahkan user ke dalam grup `libvirt`
 
   ```console
@@ -152,24 +157,32 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   sudo virsh list
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184470990-060c256e-9121-46bf-82c3-a95f8a14fb00.png)
+
   - Mengecek status cluster
 
   ```console
   kubectl cluster-info
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184471015-2524e199-6701-44b3-b931-a259616adcd2.png)
+
   - Melihat konfigurasi `minikube` yang berada di direktori ~/.minikube/machines/minikube/config.json
 
   ```console
   kubectl config view
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184471026-2bfc6230-436a-4caa-9915-eac88249c7d9.png)
+
   - Mengecek node
 
   ```console
   kubectl get nodes
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184471038-5db95e51-b8e5-453a-a8df-7ef55d9b0abf.png)
+
   - Mengakses `minikube` menggunakan ssh dan mengecek versi os yang digunakan
 
   ```console
@@ -177,19 +190,23 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   cat /etc/os-release
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184471054-7200b337-2b41-4a9d-bd1a-08a5cbcf6f90.png)
+
   - Melihat daftar addons pada `minikube`
 
   ```console
   minikube addons list
   ```
   
-  - Mengaktifkan dashboard kubernetes
+  ![image](https://user-images.githubusercontent.com/89076954/184471068-35f5f652-c7f9-4d36-b95a-e566de799654.png)
+
+  - Mengakses dashboard kubernetes
 
   ```console
-  minikube dashboard
   minikube dashboard --url
   ```
   
+  - Tunneling ke server
 
 
 
