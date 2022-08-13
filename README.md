@@ -151,6 +151,8 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   minikube start
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184474498-09612da1-5efa-4af9-92f1-b024a4cc1e97.png)
+
   - Melihat VM yang berjalan dengan perintah `virsh`
 
   ```console
@@ -253,33 +255,41 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   - Membuat 2 deployment nginx dan apache
   
   ```console
-  kubectl create deployment nginx-tes --image nginx
-  kubectl create deployment apache-tes --image httpd
+  kubectl create deployment nginx-arip --image nginx
+  kubectl create deployment apache-arip --image httpd
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184473171-96032cc3-2e2b-44a9-952c-2269b6cc3687.png)
+
   - Memverifikasi deployment
   
   ```console
   kubectl get deployment
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184473194-80a2a9bf-34e7-4c21-9c07-2d7f1a33bc1d.png)
+
   - Ekspos deployment
   
   ```console
-  kubectl expose deployment nginx-tes --port 80
-  kubectl expose deployment apache-tes --port 80
+  kubectl expose deployment nginx-arip --port 80
+  kubectl expose deployment apache-arip --port 80
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184473228-438b884e-36fc-4fab-8da3-a89a93b3c989.png)
+
   - Memverifikasi service
   
   ```console
   kubectl get service
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184473253-ef942058-bc0e-49d4-88fa-776a1f1ffeec.png)
+
   - Membuat file ingress-arip.yaml dengan isi file sebagai berikut:
   
   ```
-    apiVersion: networking.k8s.io/v1
+  apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
     name: ingress-nginx
@@ -294,7 +304,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
               pathType: Prefix
               backend:
                 service:
-                  name: nginx-tes
+                  name: nginx-arip
                   port:
                    number: 80
       - host: apache-tes.arip
@@ -304,10 +314,12 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
               pathType: Prefix
               backend:
                 service:
-                  name: apache-tes
+                  name: apache-arip
                   port:
                     number: 80
   ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184473424-13e32cc4-d0e6-4663-9a34-c1f4ba3ea396.png)
   
   - Membuat ingress dari file ingress-arip.yaml
 
@@ -315,12 +327,16 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   kubectl create -f ingress-arip.yaml
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184473429-c1adef27-85e0-4c5f-959d-d170f7be0121.png)
+
   - Memverifikasi ingress
   
   ```console
   kubectl get ingress
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184473444-fc58eade-c6e8-4aec-9763-7d20f696123b.png)
+
   - Melihat service dari semua namespace
   
   ```console
