@@ -196,39 +196,16 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
 
 
 ## Instalasi dan konfigurasi Ingress Controller Nginx
-  - Mengunduh file deploy Nginx Ingress Controller
   
+  - Mengaktifkan addons ingress pada `minikube`
+
   ```console
-  wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml
-  ```
-
-  - Menambahkan parameter `--watch-ingress-without-class=true` pada file deploy.yaml
-  
-  ```
-  containers:
-      - args:
-        - /nginx-ingress-controller
-        - --election-id=ingress-controller-leader
-        - --controller-class=k8s.io/ingress-nginx
-        - --ingress-class=nginx
-        - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
-        - --validating-webhook=:8443
-        - --validating-webhook-certificate=/usr/local/certificates/cert
-        - --validating-webhook-key=/usr/local/certificates/key
-        - --watch-ingress-without-class=true
+  minikube addons enable ingress
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184471496-1acbc144-6275-4399-a937-c850da2b62ed.png)
-
-  - Mendeploy Nginx Ingress Controller melalui file deploy.yaml
+  ![image](https://user-images.githubusercontent.com/89076954/184480671-dfbbad31-5f79-4bff-a495-09669a3a1450.png)
   
-  ```console
-  kubectl apply -f deploy.yaml
-  ```
-  
-  ![image](https://user-images.githubusercontent.com/89076954/184471523-c30229f9-f55a-4376-8d20-56b6c7f56438.png)
-
-  - Mengecek pod
+  - Mengecek pod yang ada di dalam namespace `ingress-nginx`
   
   ```console
   kubectl get pod -n ingress-nginx
@@ -236,22 +213,6 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184471549-c7cf5580-7325-4bed-b535-dbfce3e98eb2.png)
   
-  - Mengecek logs pod
-  
-  ```console
-  kubectl logs ingress-nginx-controller-fb9c8d87d-qtqwr -n ingress-nginx
-  ```
-  
-  ![image](https://user-images.githubusercontent.com/89076954/184471684-1df77e1c-c6f2-48e6-83c7-ae765ce40370.png)
-
-  - Mengecek service
-  
-  ```console
-  kubectl get svc -n ingress-nginx
-  ```
-  
-  ![image](https://user-images.githubusercontent.com/89076954/184471611-1990419e-562f-4037-ae0e-995be81eafb0.png)
-
   - Membuat 2 deployment nginx dan apache
   
   ```console
@@ -272,8 +233,8 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   - Ekspos deployment
   
   ```console
-  kubectl expose deployment nginx-arip --port 80
-  kubectl expose deployment apache-arip --port 80
+  kubectl expose deployment nginx-arip --type=NodePort --port 80
+  kubectl expose deployment apache-arip --type=NodePort --port 80
   ```
   
   ![image](https://user-images.githubusercontent.com/89076954/184473228-438b884e-36fc-4fab-8da3-a89a93b3c989.png)
@@ -284,81 +245,9 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   kubectl get service
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184473253-ef942058-bc0e-49d4-88fa-776a1f1ffeec.png)
-
-  - Membuat file ingress-arip.yaml dengan isi file sebagai berikut:
-  
-  ```
-  apiVersion: networking.k8s.io/v1
-  kind: Ingress
-  metadata:
-    name: ingress-nginx
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /$1
-  spec:
-    rules:
-      - host: nginx-tes.arip
-        http:
-          paths:
-            - path: /
-              pathType: Prefix
-              backend:
-                service:
-                  name: nginx-arip
-                  port:
-                   number: 80
-      - host: apache-tes.arip
-        http:
-          paths:
-            - path: /
-              pathType: Prefix
-              backend:
-                service:
-                  name: apache-arip
-                  port:
-                    number: 80
-  ```
-  
-  ![image](https://user-images.githubusercontent.com/89076954/184473424-13e32cc4-d0e6-4663-9a34-c1f4ba3ea396.png)
-  
-  - Membuat ingress dari file ingress-arip.yaml
-
-  ```console
-  kubectl create -f ingress-arip.yaml
-  ```
-  
-  ![image](https://user-images.githubusercontent.com/89076954/184473429-c1adef27-85e0-4c5f-959d-d170f7be0121.png)
-
-  - Memverifikasi ingress
-  
-  ```console
-  kubectl get ingress
-  ```
-  
-  ![image](https://user-images.githubusercontent.com/89076954/184473444-fc58eade-c6e8-4aec-9763-7d20f696123b.png)
-
-  - Melihat service dari semua namespace
-  
-  ```console
-  kubectl get svc --all-namespaces
-  ```
-  
-  - Mengubah service ingress-nginx-controller dengan editor nano
-  
-  ```console
-  KUBE_EDITOR="nano" kubectl edit svc -n ingress-nginx ingress-nginx-controller
-  ```
-  
-  - Menambahkan ip node master sebagai ip eksternal
-  
-  ```
-    selector:
-      app.kubernetes.io/component: controller
-      app.kubernetes.io/instance: ingress-nginx
-      app.kubernetes.io/name: ingress-nginx
-    externalIPs:
-    - IP-MASTER-LOCAL
-  ```
+  - asdas
+  - asd
+  - 
   
   ### Testing
   
