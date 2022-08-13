@@ -551,65 +551,55 @@ Credit : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpr
 
 ## Instalasi dan Konfigurasi MetalLB untuk Load Balancer
   
-  - Mengunduh file konfigurasi metallb dari situs [raw.githubusercontent.com](raw.githubusercontent.com)
-
-  ```console
-  wget https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
-  wget https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
-  ```
-  
-  - Menginstal metallb versi 0.12.1 menggunakan file metallb-native.yaml
+  - Mengecek status addons `metallb` pada minikube
   
   ```console
-  kubectl apply -f namespace.yaml
-  kubectl apply -f metallb.yaml
+  minikube addons list
   ```
   
-  - Memverifikasi namespace metallb
-  
-  ```
-  kubectl get namespace
-  kubectl get all --namespace metallb-system
-  ```
-  
-  - Membuat file konfigurasi configmap bernama metallb-cm.yaml dengan isi sebagai berikut:
-  
-  ```
-  apiVersion: v1
-kind: configMap
-metadata:
-  name: config
-  namespace: metallb-system
-data:  
-  config: |
-    address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-      - range ip ( 10.1.1 - 10.1.100 ) sesuai network
-  ```
-  
-  - Membuat resource configmap dari file metallb-cm.yaml
+  ![image](https://user-images.githubusercontent.com/89076954/184503120-c6387ed7-addc-4907-b86d-14311de0801f.png)
 
+  - Mengaktifkan addons `metallb` yang ada pada minikube
+  
   ```console
-  kubectl create -f metallb-cm.yaml
+  minikube addons enable metallb
   ```
-   
-## Deploy Aplikasi Nginx dengan ekspos akses Load Balancer
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184503009-f54748b8-b3bd-4e3f-b796-eb7ac4b58837.png)
 
-  - Membuat deployment nginx
+  - Mengonfigurasi ip address yang digunakan `metallb` untuk layanan loadbalancer dalam kasus ini penulis menggunakan jangkuan ip 192.168.39.150 - 192.168.39.170
+  
+  ```console
+  minikube addons configure metallb
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184503227-a96f4e8c-c572-4795-a615-6effeaa831e6.png)
+
+  - Melihat konfigurasi yang telah dibuat
+  
+  ```console
+  kubectl get configmap/config -n metallb-system -o yaml
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184503279-207eef4b-b1aa-4c81-836d-8587ea140c06.png)
+
+### Deploy Aplikasi Nginx dengan ekspos akses Load Balancer
+
+  - Membuat deployment bernama nginx dengan image nginx
   
   ```console
   kubectl create deploy nginx --image nginx
   ```
   
-  - Memverifikasi pod nginx
+    - Memverifikasi pod nginx
 
   ```console
   kubectl get pod
   ```
   
-  - Ekspos deployment nginx dengan tipe loadbalancer
+  ![image](https://user-images.githubusercontent.com/89076954/184503426-a0eafed2-e851-477c-9608-8d62ff8a6960.png)
+
+  - Mengekspos deployment nginx dengan tipe loadbalancer
 
   ```console
   kubectl expose deploy nginx --port 80 --type LoadBalancer
@@ -621,10 +611,22 @@ data:
   kubectl get svc
   ```
   
-  - Testing nginx menggunakan browser menggunakan ip dari loadbalancer
+  ![image](https://user-images.githubusercontent.com/89076954/184503598-766e4fcc-958d-47af-929a-403850149bde.png)
 
-  GAMBAR BROWSING IP NGINX LOAD BALANCER
+  - Testing nginx menggunakan curl
   
+  ```console
+  curl http://192.168.39.150
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184503655-00d53732-2d7a-48bb-84bd-d185c36bb038.png)
+  
+  - Testing nginx melalui browser mozilla
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184503689-9ac8b69c-a346-4748-ae85-b0c845992715.png)
+
+
+Credit: https://kubebyexample.com/en/learning-paths/metallb/install
   
   
   ==========================================================================================
