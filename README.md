@@ -211,7 +211,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   kubectl get pod -n ingress-nginx
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184471549-c7cf5580-7325-4bed-b535-dbfce3e98eb2.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184493098-7fa3c4bb-390d-4083-9364-6ff4484c5f75.png)
   
   - Membuat 2 deployment nginx dan apache
   
@@ -237,7 +237,8 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   kubectl expose deployment apache-arip --type=NodePort --port 80
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184473228-438b884e-36fc-4fab-8da3-a89a93b3c989.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184493076-d798cfbe-b1ca-49fb-bae4-f6191ec500ca.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184493069-850fb363-4193-4f67-8ae4-0f9c59bb11e6.png)
 
   - Memverifikasi service
   
@@ -245,52 +246,71 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   kubectl get service
   ```
   
-  - asdas
-  - asd
-  - 
-  
-  ### Testing
-  
-  **Linux**
-  
-  - Tambahkan baris baru di /etc/hosts
-  
-  ```
-  IP-MASTER-LOCAL nginx-tes.arip apache-tes.arip
-  ```
-  
-  - Akses menggunakan `curl`
-  
-  ```console
-  curl nginx-tes.arip
-  curl apache-tes.arip
-  ```
-   
-  **Windows**
-  
-  - Tambahkan baris baru pada file host di direktori C:\Windows\System32\Drivers\etc\hosts, ubah file menggunakan notepad dengan izin administrator
-  
-  ```
-  IP-MASTER-LOCAL nginx-tes.arip apache-tes.arip
-  ```
-  
-  - Tunneling menggunakan *command prompt* agar dapat mengakses domain
-  
-  ```console
-  ssh -D [sock] arip.id
-  ```
-  
-  - Mengubah pengaturan proxy pada mozilla yang akan digunakan untuk mengakses domain
-  
-  GAMBAR PENGATURAN PROXY MOZILLA
-  
-  - Akses domain nginx-tes.arip
-  
-  GAMBAR AKSES NGINX
-  
-  - Akses domain apache-tes.arip
+  ![image](https://user-images.githubusercontent.com/89076954/184493109-00bcd7a8-296c-417f-885c-f51317c793cc.png)
 
-  GAMBAR AKSES APACHE
+  - Membuat file `ingress` bernama ingress-arip.yaml dengan isi sebagai berikut:
+  
+  ```
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: ingress-arip
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
+  spec:
+    rules:
+      - host: nginx.arip
+        http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: nginx-arip
+                  port:
+                    number: 80
+     - host: apache.arip  
+        http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: apache-arip
+                 port:
+                    number: 80
+  ```
+  
+  - Membuat `ingress` dari file ingress-arip.yaml
+  
+  ```console
+  kubectl apply -f ingress-arip.yaml
+  ```
+  
+  - Mengecek ip `ingress-arip`
+  
+  ```console
+  kubectl get ingress
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184493334-f3faf104-4b1d-4767-8cb1-d06e5b621438.png)
+
+  - Menambahkan baris baru pada `/etc/hosts` agar dapat mengenali domain
+  
+    ```console
+  sudo nano /etc/hosts
+  192.168.39.134 nginx.arip apache.arip
+  ```
+  
+  - Tes akses menggunakan perintah curl
+  
+  ```console
+  curl nginx.arip
+  curl apache.arip
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184493435-7ef951ef-ba33-4b81-8c0b-217ff6b1845f.png)
+
 
 ## Membuat Dynamic Storage Class dengan NFS
 
