@@ -93,18 +93,103 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   ```
   
   - Mengubah file `kubectl` dan memindahkan nya ke direktori /usr/local/bin
+
+  ```console
+  chmod +x kubectl
+  mv kubectl /usr/local/bin
+  ```
+  
+  
   - Memeriksa versi `kubectl`
+
+  ```console
+  kubectl version -o json
+  ```
+  
+  
   - Menginstal Docker machine driver kvm
+
+  ```console
+  curl -LO https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-kvm2
+  ```
+  
+  -Mengubah file 'docker-machine-driver-kvm2' dan memindahkannya ke direktori /usr/local/bin
+  
+  ```console
+  chmod +x docker-machine-driver-kvm2
+  sudo mv docker-machine-driver-kvm2 /usr/local/bin
+  ```
+  
+  
   - Melihat versi `docker-machine-driver-kvm2`
+
+  ```console
+  docker-machine-driver-kvm2 version
+  ```
+  
   - Menambahkan user ke dalam grup `libvirt`
+
+  ```console
+  sudo usermod -aG libvirt $USER
+  newgrp libvirt
+  ```
+  
   - Menjadikan kvm sebagai default driver `minikube`
+
+  ```console
+  minikube config set vm-driver kvm2
+  ```
+  
   - Menjalankan `minikube`
-  - Melihat `minikube` yang berjalan
+
+  ```console
+  minikube start
+  ```
+  
+  - Melihat VM yang berjalan dengan perintah `virsh`
+
+  ```console
+  sudo virsh list
+  ```
+  
   - Mengecek status cluster
+
+  ```console
+  kubectl cluster-info
+  ```
+  
   - Melihat konfigurasi `minikube` yang berada di direktori ~/.minikube/machines/minikube/config.json
+
+  ```console
+  kubectl config view
+  ```
+  
   - Mengecek node
-  - Mengakses `minikube` menggunakan ssh
+
+  ```console
+  kubectl get nodes
+  ```
+  
+  - Mengakses `minikube` menggunakan ssh dan mengecek versi os yang digunakan
+
+  ```console
+  minikube ssh
+  cat /etc/os-release
+  ```
+  
+  - Melihat daftar addons pada `minikube`
+
+  ```console
+  minikube addons list
+  ```
+  
   - Mengaktifkan dashboard kubernetes
+
+  ```console
+  minikube dashboard
+  minikube dashboard --url
+  ```
+  
 
 
 
