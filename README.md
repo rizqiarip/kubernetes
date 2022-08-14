@@ -92,16 +92,16 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
   ```
   
-  - Mengubah file `kubectl` dan memindahkan nya ke direktori /usr/local/bin
+  - Mengubah file `kubectl` dan memindahkan nya ke direktori `/usr/local/bin`
 
   ```console
   chmod +x kubectl
   mv kubectl /usr/local/bin
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184470860-1b24bc96-0afc-4b0e-bbeb-4045297b2ed2.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184542890-4f2fd53d-fbd4-49df-b4f2-df880b2151e3.png)
 
-  - Memeriksa versi `kubectl`
+  - Memeriksa versi dari `kubectl`
 
   ```console
   kubectl version -o json
@@ -109,13 +109,13 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184470872-7f998ca3-6be5-4bea-aef1-7eeae35107fd.png)
 
-  - Menginstal Docker machine driver kvm
+  - Menginstal `docker-machine-driver-kvm2`
 
   ```console
   curl -LO https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-kvm2
   ```
   
-  -Mengubah file 'docker-machine-driver-kvm2' dan memindahkannya ke direktori /usr/local/bin
+  - Mengubah file `docker-machine-driver-kvm2` dan memindahkannya ke direktori /usr/local/bin
   
   ```console
   chmod +x docker-machine-driver-kvm2
@@ -153,7 +153,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184474498-09612da1-5efa-4af9-92f1-b024a4cc1e97.png)
 
-  - Melihat VM yang berjalan dengan perintah `virsh`
+  - Melihat `minikube` yang berjalan menggunakan perintah `virsh`
 
   ```console
   sudo virsh list
@@ -169,7 +169,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184471015-2524e199-6701-44b3-b931-a259616adcd2.png)
 
-  - Melihat konfigurasi `minikube` yang berada di direktori ~/.minikube/machines/minikube/config.json
+  - Melihat konfigurasi `minikube` yang berada di direktori `~/.minikube/machines/minikube/config.json`
 
   ```console
   kubectl config view
@@ -194,6 +194,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184471054-7200b337-2b41-4a9d-bd1a-08a5cbcf6f90.png)
 
+Referensi : https://computingforgeeks.com/how-to-run-minikube-on-kvm/#:~:text=To%20run%20Minikube%20on%20KVM%2C%20you%20need%20to%20install%20some,hosts%20with%20docker%2Dmachine%20commands
 
 ## Instalasi dan konfigurasi Ingress Controller Nginx
   
@@ -205,7 +206,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184480671-dfbbad31-5f79-4bff-a495-09669a3a1450.png)
   
-  - Mengecek pod yang ada di dalam namespace `ingress-nginx`
+  - Mengecek `pod` yang ada di dalam `namespace` ingress-nginx
   
   ```console
   kubectl get pod -n ingress-nginx
@@ -213,7 +214,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184493098-7fa3c4bb-390d-4083-9364-6ff4484c5f75.png)
   
-  - Membuat 2 deployment nginx dan apache
+  - Membuat 2 deployment `nginx` dan `apache`
   
   ```console
   kubectl create deployment nginx-arip --image nginx
@@ -222,7 +223,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184473171-96032cc3-2e2b-44a9-952c-2269b6cc3687.png)
 
-  - Memverifikasi deployment
+  - Memverifikasi deployment yang telah dibuat
   
   ```console
   kubectl get deployment
@@ -230,7 +231,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   ![image](https://user-images.githubusercontent.com/89076954/184473194-80a2a9bf-34e7-4c21-9c07-2d7f1a33bc1d.png)
 
-  - Ekspos deployment
+  - Ekspos deployment nginx-arip dan apache-arip
   
   ```console
   kubectl expose deployment nginx-arip --type=NodePort --port 80
