@@ -314,40 +314,39 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
 
 ## Membuat Dynamic Storage Class dengan NFS
 
-Membuat nfs dengan ip server 192.168.39.192 path = /data
-
-  - Menginstal NFS dan membuat direktori dimana nfs menyimpan file
+  
+  - Menginstal NFS server
   
   ```console
   sudo apt-get update
   sudo apt install nfs-kernel-server nfs-common portmap
   sudo systemctl start nfs-server
   sudo systemctl status nfs-server
-  mkdir -p /data 
-  chmod -R 777 /srv/nfs/
   ```
   
-  - Mengekspor direktori dengna menambah baris baru pada file /etc/exports
+  - Membuat dan Mengekspor direktori dengan menambah baris baru pada file /etc/exports
   
   ```console
-  sudo vi /etc/exports
+  mkdir -p /data
+  sudo nano /etc/exports
+  /data  *(rw,sync,no_subtree_check,no_root_squash,insecure)
   sudo exportfs -rv
   showmount -e
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184508981-cd19164a-4b74-4725-a27a-476b939d8583.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184532626-fcb58849-7124-4c98-bcc2-89091ee975c4.png)
 
-  - Memverifikasi minikube dapat melakukan `ping` ke localhost dan me *mounting* nfs di minikube dengan ssh
+  - Me *mounting* nfs melalui ssh
   
   ```console
   minikube ip
-  ssh docker@192.168.39.134 (pass: tcuser)
-  mount -t nfs 192.168.1.7:/srv/nfs/mydata /mnt
+  ssh docker@192.168.39.192 (pass: tcuser)
+  mount -t nfs 192.168.39.1:/data /mnt
   mount | grep mydata
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184509050-ca06950a-a834-415f-9c77-e55499a1cbe2.png)
-
+  ![image](https://user-images.githubusercontent.com/89076954/184533014-4dd58062-8ba6-4679-9d7c-834f1396f59d.png)
+  
   - Membuat file bernama nfs.yaml untuk membuat `persistence volume`
   
   ```
@@ -363,19 +362,20 @@ Membuat nfs dengan ip server 192.168.39.192 path = /data
       storage: 200Mi
     accessModes:
       - ReadWriteMany
-   nfs:
+    nfs:
       server: 192.168.39.1
-      path: "/srv/nfs/mydata"
-  ```
+      path: "/data"
+
+    ```
   
   - Mendeploy dan memverifikasi `persistent volume` nfs 
   
   ```console
   kubectl apply -f nfs.yaml
-  kubectl get pv,pvc
+  kubectl get pv nfs-pv
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184509197-1d48f900-78a1-4b0b-a61f-829662f64a73.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184533168-4829d75b-68e5-4558-b184-a6088a9b76cd.png)
 
   - Membuat file bernama nfs_pvc.yaml untuk membuat `persistence volume claim` 
   
@@ -397,71 +397,122 @@ Membuat nfs dengan ip server 192.168.39.192 path = /data
   
   ```console
   kubectl apply -f nfs_pvc.yaml
-  kubectl get pv,pvc
+  kubectl get pvc nfs-pvc
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184509223-37d637bf-dfa5-40f3-8b1a-4d9954238ff1.png)
-
-  - Membuat `pod` untuk akses `pvc` menggunakan deployment nginx
+  ![image](https://user-images.githubusercontent.com/89076954/184533378-62e1abb2-502c-4dfa-abd3-27a4d5032c8f.png)
+  
+  - Membuat file deployment `nginx` dengan pvc `nfs-pvc` dan mountpath `/usr/share/nginx/html` bernama nginx.yaml
   
   ```
   apiVersion: apps/v1
   kind: Deployment
   metadata:
+    creationTimestamp: null
     labels:
       app: nginx
-    name: nfs-nginx
+    name: nginx-with-pvc
   spec:
-   replicas: 1
-   selector:
+    progressDeadlineSeconds: 2147483647
+    replicas: 1
+    revisionHistoryLimit: 2147483647
+    selector:
       matchLabels:
         app: nginx
-   template:
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
       metadata:
+        creationTimestamp: null
         labels:
           app: nginx
       spec:
+        containers:
+        - image: nginx
+          imagePullPolicy: Always
+          name: webserver
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /usr/share/nginx/html
+            name: webservercontent
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
         volumes:
-        - name: nfs-test
+        - name: webservercontent
           persistentVolumeClaim:
             claimName: nfs-pvc
-       containers:
-        - image: nginx
-          name: nginx
-          volumeMounts:
-          - name: nfs-test
-            mountPath: /usr/share/nginx/html
+  status: {}  
   ```
-  
-  - Mendeploy dan memverifikasi `pod`
+
+  - Mendeploy dan memverifikasi `nginx` melalui file `nginx.yaml`
   
   ```console
-  kubectl apply -f nfs_pod.yaml
+  kubectl apply -f nginx.yaml
   kubectl get pod
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184509246-d9784686-577c-4468-8b13-b3bf4bd67141.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184534277-2a69ef73-0b0a-4a7f-b5d1-d6d01e6825fd.png)
 
-  - Membuat file test.html pada direktori `/usr/share/nginx/html` di dalam container nginx
+  - Membuat file bernama nginx-svc.yaml untuk membuat `service` bernama nginx-server 
   
-  ```console
-  kubectl exec -it nfs-nginx-5c89779fb6-7z9w7 bash
-  nano /usr/share/nginx/html/test.html
-  semoga berhasil
-  cat /usr/share/nginx/html/test.html
+  ```
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: nginx-server
+  spec:
+    type: NodePort
+    ports:
+    - port: 80
+      protocol: TCP
+    selector:
+      app: nginx
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184509298-bbf774aa-e4b8-47a3-86c0-ce02be0c7298.png)
-
-  - Memverifikasi file test.html diluar container
+  - Mendeploy dan memverifikasi `service` melalui file nginx-svc.yaml
   
   ```console
-  ls /srv/nfs/mydata
-  cat /srv/nfs/mydata/test.html
+  kubectl apply -f nginx-svc.yaml
+  kubectl get svc
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184509360-f2b098fd-117f-4ba9-a0da-c58af357e857.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184534285-e89b9633-978b-4996-9ea5-6cdcc95dc36c.png)
 
+  - Membuat file `index.html` pada direktori `/data`
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184533740-f7b2b8ac-cfd1-497a-97ba-6f0f8f096839.png)
+
+  - Tes `nginx` yang telah dibuat menggunakan perintah curl
+  
+   ```console
+   minikube service nginx-server --url
+   curl http://192.168.39.192:32152
+   ```
+   
+   ![image](https://user-images.githubusercontent.com/89076954/184534357-6e13a4a0-52a2-4c61-a4d2-848a7e3e6118.png)
+
+  - Mengubah file `index.html` pada direktori `/data`
+  
+  ```console
+  sudo nano /data/index.html
+  tes storage nfs rizqiarip ! v2
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184534422-38a79dd8-14e5-43ee-b4f1-718e5cab1012.png)
+
+  - Tes `nginx` untuk memverifikasi perubahan yang dibuat
+  - 
   - Menghapus semua resource dan mengecek file test.html
   
   ```console
