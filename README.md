@@ -288,7 +288,7 @@ Referensi : https://computingforgeeks.com/how-to-run-minikube-on-kvm/#:~:text=To
   kubectl apply -f ingress-arip.yaml
   ```
   
-  - Mengecek ip `ingress`
+  - Mengecek IP `ingress`
   
   ```console
   kubectl get ingress
@@ -678,14 +678,13 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
               path: /data2
   ```
 
-  - Mendeploy file deployment.yamssdsssssss
+  - Mendeploy file deployment.yaml
   
   ```console
   kubectl apply -f deployment.yaml
-  kubectl get deploy
   ```
 
-  - Membuat file bernama class.yaml untuk membuat `storageclass` 
+  - Membuat file bernama class.yaml untuk membuat `storageclass` dengan isi sebagai berikut:
   
   ```
   apiVersion: storage.k8s.io/v1
@@ -695,10 +694,9 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   provisioner: fuseim.pri/ifs 
   parameters:
     archiveOnDelete: "false"
-
   ```
 
-  - Mendeploy dan memverifikasi class.yaml
+  - Mendeploy dan memverifikasi `storageclass` dari file class.yaml
   
   ```console
   kubectl apply -f class.yaml
@@ -763,7 +761,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
         storage: 1Mi
   ```
 
-  - Mendeploy dan memverifikasi `persistentvolumeclaim`
+  - Mendeploy dan memverifikasi `persistentvolumeclaim` dengan bound volume nfs-pv (persistentvolume dibuat secara manual dikarenakan kendala)
   
   ```console
   kubectl apply -f test-claim.yaml
@@ -816,13 +814,13 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   ![image](https://user-images.githubusercontent.com/89076954/184542580-8f0989b0-1f01-4430-ad21-333d98896e3f.png)
 
 Referensi : https://medium.com/@myte/kubernetes-nfs-and-dynamic-nfs-provisioning-97e2afb8b4a9
-            https://github.com/kubernetes-retired/external-storage/tree/master/nfs-client
-            https://en.cdmana.com/2022/185/202207040708159405.html#2waiting_for_a_volume_to_be_created_either_by_external_provisioner_fuseimpriifs_or_manually_created_by_system_administrator_337
+https://github.com/kubernetes-retired/external-storage/tree/master/nfs-client
+https://en.cdmana.com/2022/185/202207040708159405.html#2waiting_for_a_volume_to_be_created_either_by_external_provisioner_fuseimpriifs_or_manually_created_by_system_administrator_337
 
 
 ## Deploy Aplikasi Wordpress dan MySQL menggunakan Persistent Volume Claim (PVC)
 
-  - Membuat file bernama kustomization.yaml untuk menyimpan password database
+  - Membuat file bernama kustomization.yaml untuk menyimpan value password
   
   ```
   secretGenerator:
@@ -831,7 +829,7 @@ Referensi : https://medium.com/@myte/kubernetes-nfs-and-dynamic-nfs-provisioning
     - password=arip123
   ```
   
-  - Membuat file yang berisi konfigurasi untuk menambahkan resource service, pvc, dan deployment MySQL dengan file bernama mysql-deployment.yaml, variabel `MYSQL_ROOT_PASSWORD` mengambil password atau kata sandi dari secretGenerator dengan nama mysql-pass
+  - Membuat file yang berisi konfigurasi untuk menambahkan `service`, `pvc`, dan `deployment` MySQL dengan file bernama mysql-deployment.yaml, environment `MYSQL_ROOT_PASSWORD` mengambil value password atau kata sandi dari secretGenerator dengan nama mysql-pass
     
   ```
 apiVersion: v1
@@ -839,7 +837,7 @@ kind: Service
 metadata:
   name: wordpress-mysql
   labels:
-    app: wordpress #label
+    app: wordpress
 spec:
   ports:
     - port: 3306
@@ -901,7 +899,7 @@ spec:
           claimName: mysql-pv-claim
   ```
   
-  - Membuat file yang berisi konfigurasi untuk menambahkan resource service, pvc, dan deployment Wordpress dengan file bernama wordpress-deployment.yaml, direktori persistent volume diarahkan pada `/var/www/html`
+  - Membuat file yang berisi konfigurasi untuk membuat `service`, `pvc`, dan `deployment` Wordpress dengan file bernama wordpress-deployment.yaml
   
   ```
 apiVersion: v1
@@ -972,7 +970,7 @@ spec:
         persistentVolumeClaim:
   ```
   
-  - Menambahkan baris baru berisi nama file deployment pada file `kustomization.yaml`
+  - Menambahkan baris baru pada file kustomization.yaml untuk mendefinisikan nama nama file deployment untuk memudahkan deploy aplikasi
   
   ```
   resources:
@@ -980,7 +978,7 @@ spec:
     - wordpress-deployment.yaml
   ```
   
-  - Mengaplikasikan situs `wordpress` dan database `mysql`
+  - Mendeploy aplikasi wordpress
   
   ```console
   kubectl apply -k ./
@@ -988,7 +986,7 @@ spec:
   
   ![image](https://user-images.githubusercontent.com/89076954/184496165-6d698423-02d8-4b8a-85dc-84846556d82d.png)
 
-  - Memverifikasi resource `secrets` yang menyimpan kata sandi atau password
+  - Memverifikasi `secrets` atau resource yang menyimpan kata sandi untuk autorisasi database
   
   ```console
   kubectl get secrets
@@ -996,7 +994,7 @@ spec:
   
   ![image](https://user-images.githubusercontent.com/89076954/184496177-8b50810b-511d-4cb9-af77-83bb76ed5e68.png)
 
-  - Memverifikasi resource service wordpress
+  - Memverifikasi `service` wordpress dan mysql
   
   ```console
   kubectl get svc
@@ -1004,7 +1002,7 @@ spec:
   
   ![image](https://user-images.githubusercontent.com/89076954/184496187-e33eac76-e2ce-491a-994b-f1384afdf600.png)
 
-  - Memverifikasi resource persistent volume claim
+  - Memverifikasi `persistentvolumeclaim` wordpress dan mysql
   
   ```console
   kubectl get pvc
@@ -1012,7 +1010,7 @@ spec:
   
   ![image](https://user-images.githubusercontent.com/89076954/184496196-8131973e-8a24-4aa6-a6e9-6395768f3217.png)
 
-  - Memverifikasi resource pods
+  - Memverifikasi `pod` wordpress dan mysql
   
   ```console
   kubectl get pod
@@ -1020,7 +1018,7 @@ spec:
   
   ![image](https://user-images.githubusercontent.com/89076954/184496212-1e99c238-0c83-4214-9f8f-5b768de7f185.png)
 
-  - Melihat url service wordpress menggunakan perintah `minikube`
+  - Melihat url `service` wordpress untuk mengakses aplikasi
   
   ```console
   minikube service wordpress --url
@@ -1072,7 +1070,7 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
   
   ![image](https://user-images.githubusercontent.com/89076954/184503009-f54748b8-b3bd-4e3f-b796-eb7ac4b58837.png)
 
-  - Mengonfigurasi ip address yang digunakan `metallb` untuk layanan loadbalancer dalam kasus ini penulis menggunakan jangkuan ip 192.168.39.150 - 192.168.39.170
+  - Mengonfigurasi IP address yang digunakan `metallb` untuk layanan loadbalancer, dalam kasus ini penulis menggunakan jangkuan IP 192.168.39.150 - 192.168.39.170
   
   ```console
   minikube addons configure metallb
@@ -1090,13 +1088,13 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
 
 ### Deploy Aplikasi Nginx dengan ekspos akses Load Balancer
 
-  - Membuat deployment bernama nginx dengan image nginx
+  - Membuat deployment bernama `nginx` dengan image nginx
   
   ```console
-  kubectl create deploy nginx --image nginx
+  kubectl create deployment nginx --image nginx
   ```
   
-    - Memverifikasi pod nginx
+  - Memverifikasi pod dari `deployment` nginx
 
   ```console
   kubectl get pod
@@ -1104,13 +1102,13 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
   
   ![image](https://user-images.githubusercontent.com/89076954/184503426-a0eafed2-e851-477c-9608-8d62ff8a6960.png)
 
-  - Mengekspos deployment nginx dengan tipe loadbalancer
+  - Mengekspos `deployment` nginx dengan tipe loadBalancer
 
   ```console
-  kubectl expose deploy nginx --port 80 --type LoadBalancer
+  kubectl expose deploy nginx --type LoadBalancer --port 80
   ```
   
-  - Memastikan bahwa ip eksternal dari service nginx diambil dari loadbalancer metallb
+  - Memastikan bahwa IP eksternal dari `service` nginx diambil dari `loadBalancer`
 
   ```console
   kubectl get svc
@@ -1126,12 +1124,13 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
   
   ![image](https://user-images.githubusercontent.com/89076954/184503655-00d53732-2d7a-48bb-84bd-d185c36bb038.png)
   
-  - Testing nginx melalui browser mozilla
+  - Testing `nginx` melalui browser mozilla
   
   ![image](https://user-images.githubusercontent.com/89076954/184503689-9ac8b69c-a346-4748-ae85-b0c845992715.png)
 
 
-- Testing tambahan menggunakan deployment `apache` (kondisi yang harusnya terjadi adalah deployment apache mendapatkan ip 192.168.39.151)
+  - Testing tambahan menggunakan `apache` dengan image `httpd` (kondisi yang harusnya terjadi adalah deployment apache mendapatkan IP 192.168.39.151)
+  - Membuat dan mengekspos `deployment` bernama apache-metallb
   
   ```console
   kubectl create deployment apache-metallb --image httpd
@@ -1140,7 +1139,7 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
   
   ![image](https://user-images.githubusercontent.com/89076954/184504021-64fdf772-295b-48b1-92ea-f15592c4279a.png)
 
-  - Mengecek ip eksternal yang didapat `apache`
+  - Mengecek IP eksternal `service` apache-metallb
   
   ```console
   kubectl get svc apache-metallb
@@ -1148,7 +1147,7 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
   
   ![image](https://user-images.githubusercontent.com/89076954/184504085-6434cf91-f897-4c44-9e33-1851af298b51.png)
 
-  - Tes akses ip load balancer menggunakan curl
+  - Tes akses apache menggunakan IP `loadBalancer`
   
   ```console
   curl 192.168.39.151
@@ -1159,9 +1158,7 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
 
 Referensi: https://kubebyexample.com/en/learning-paths/metallb/install
 
-  ===================================================================================
-  
-  
+
 
 
 
