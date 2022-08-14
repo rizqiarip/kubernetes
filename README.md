@@ -530,10 +530,218 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
   
   ![image](https://user-images.githubusercontent.com/89076954/184534728-f9a30e79-fdf5-4f45-a8dd-8b521b5e5885.png)
   
-  Dynamic NFS provisioning
+  ###Dynamic NFS provisioning
   
-  Masalah dengan metode sebelumnya adalah bahwa seseorang harus membuat setiap volume persistensi untuk semua permintaan pvc, yang dapat memakan waktu. Cara untuk mengatasi ini adalah dengan memiliki klien NFS yang secara otomatis akan melakukannya untuk kami. Meminta klaim volume persistensi secara otomatis akan memicu pembuatan volume persistensi. Agar hal ini terjadi, klien NFS harus diinstal di kluster kubernetes, dan akses harus diberikan kepada klien menggunakan akun layanan.
+  - Membuat dan Mengekspor direktori dengan menambah baris baru pada file `/etc/exports`
   
+  ```console
+  mkdir -p /data2
+  sudo nano /etc/exports
+  /data2  *(rw,sync,no_subtree_check,no_root_squash,insecure)
+  sudo exportfs -rv
+  showmount -e
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184540869-631a4f1b-ef7e-4444-ad50-f8338221e70f.png)
+  
+  - Me *mounting* nfs melalui ssh
+  
+  ```console
+  minikube ip
+  ssh docker@192.168.39.192 (pass: tcuser)
+  mount -t nfs 192.168.39.1:/data2 /mnt
+  df -Th
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184540846-8d737ef4-e7dd-4676-8b4d-2496f063a653.png)
+  
+  - Membuat file bernama rbac.yaml untuk membuat `serviceaccount`, `clusterrole`, `clusterrolebinding`, `role`, dan `rolebinding`
+  
+  ```
+  apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: nfs-client-provisioner
+    namespace: default
+  ---
+  kind: ClusterRole
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    name: nfs-client-provisioner-runner
+  rules:
+    - apiGroups: [""]
+      resources: ["persistentvolumes"]
+      verbs: ["get", "list", "watch", "create", "delete"]
+    - apiGroups: [""]
+      resources: ["persistentvolumeclaims"]
+      verbs: ["get", "list", "watch", "update"]
+    - apiGroups: ["storage.k8s.io"]
+      resources: ["storageclasses"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: [""]
+      resources: ["events"]
+      verbs: ["create", "update", "patch"]
+  ---
+  kind: ClusterRoleBinding
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    name: run-nfs-client-provisioner
+  subjects:
+    - kind: ServiceAccount
+      name: nfs-client-provisioner
+      namespace: default
+  roleRef:
+    kind: ClusterRole
+    name: nfs-client-provisioner-runner
+    apiGroup: rbac.authorization.k8s.io
+  ---
+  kind: Role
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    name: leader-locking-nfs-client-provisioner
+    namespace: default
+  rules:
+    - apiGroups: [""]
+      resources: ["endpoints"]
+      verbs: ["get", "list", "watch", "create", "update", "patch"]
+  ---
+  kind: RoleBinding
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    name: leader-locking-nfs-client-provisioner
+    namespace: default
+  subjects:
+    - kind: ServiceAccount
+      name: nfs-client-provisioner
+      namespace: default
+  roleRef:
+    kind: Role
+    name: leader-locking-nfs-client-provisioner
+    apiGroup: rbac.authorization.k8s.io
+  ```
+  
+  - Mendeploy dan memverifikasi rbac.yaml 
+  
+  ```console
+  kubectl apply -f rbac.yaml
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184541484-0bdef4cb-8c61-4c86-a9bc-ac0e8b9f10bc.png)
+
+  - Membuat file bernama deployment.yaml
+  
+  ```
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: nfs-client-provisioner
+    labels:
+      app: nfs-client-provisioner
+    namespace: default
+  spec:
+    replicas: 1
+    strategy:
+      type: Recreate
+    selector:
+      matchLabels:
+        app: nfs-client-provisioner
+    template:
+      metadata:
+        labels:
+          app: nfs-client-provisioner
+      spec:
+        serviceAccountName: nfs-client-provisioner
+        containers:
+          - name: nfs-client-provisioner
+            image: quay.io/external_storage/nfs-client-provisioner:latest
+            volumeMounts:
+              - name: nfs-client-root
+                mountPath: /persistentvolumes
+            env:
+              - name: PROVISIONER_NAME
+                value: fuseim.pri/ifs
+              - name: NFS_SERVER
+                value: 192.168.39.1
+              - name: NFS_PATH
+                value: /data2
+        volumes:
+          - name: nfs-client-root
+            nfs:
+              server: 192.168.39.1
+              path: /data2
+  ```
+
+  - Mendeploy dan memverifikasi deployment.yaml
+  
+  ```console
+  kubectl apply -f deployment.yaml
+  kubectl get deploy
+  ```
+
+  - Membuat file bernama class.yaml untuk membuat `storageclass` 
+  
+  ```
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: managed-nfs-storage
+  provisioner: fuseim.pri/ifs 
+  parameters:
+    archiveOnDelete: "false"
+
+  ```
+
+  - Mendeploy dan memverifikasi class.yaml
+  
+  ```console
+  kubectl apply -f class.yaml
+  kubectl get sc
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184541825-cd069e40-24a0-4d39-ad16-b29fcb1678d6.png)
+
+  - Mengganti default `storageclass`
+  
+  ```console
+  kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+  kubectl patch storageclass managed-nfs-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184541842-6454f290-d906-4e93-bdb7-b4ccf00b5aae.png)
+
+  - Membuat file bernama test-claim.yaml untuk membuat `persistentvolume` 
+  
+  ```
+
+  ```
+
+  - Mendeploy dan memverifikasi class.yaml
+  
+  ```console
+  kubectl apply -f class.yaml
+  kubectl get sc
+  ```
+
+  - Membuat file bernama class.yaml untuk membuat `storageclass` 
+  
+  ```
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: managed-nfs-storage
+  provisioner: fuseim.pri/ifs 
+  parameters:
+    archiveOnDelete: "false"
+
+  ```
+
+  - Mendeploy dan memverifikasi class.yaml
+  
+  ```console
+  kubectl apply -f class.yaml
+  kubectl get sc
+  ```
+
   -
   
   
