@@ -6,7 +6,7 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
   
   Gambar topologi arsitektur kubernetes
   
-![Topologi Kubernetes](https://user-images.githubusercontent.com/89076954/184551326-226241df-0aa0-40ce-bb2b-70a015e314df.png)
+![Topologi Kubernetes](https://user-images.githubusercontent.com/89076954/184551373-c40aebe2-170a-4f92-bb76-1a925a89ada0.png)
 
 Referensi : https://sahl.run/blog/arsitektur-kubernetes
 
