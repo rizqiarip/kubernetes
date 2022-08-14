@@ -393,7 +393,7 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
       storage: 50Mi
   ```
   
-  - Mendeploy dan memverifikasi `persisten volume claim` nfs
+  - Mendeploy dan memverifikasi `persistent volume claim` nfs
   
   ```console
   kubectl apply -f nfs_pvc.yaml
@@ -502,28 +502,34 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
    
    ![image](https://user-images.githubusercontent.com/89076954/184534357-6e13a4a0-52a2-4c61-a4d2-848a7e3e6118.png)
 
-  - Mengubah file `index.html` pada direktori `/data`
+  - Testing nfs dengan mengubah file `index.html` pada direktori `/data` dan mengakses ulang `nginx`
   
   ```console
   sudo nano /data/index.html
   tes storage nfs rizqiarip ! v2
+  curl http://192.168.39.192:32152
   ```
   
   ![image](https://user-images.githubusercontent.com/89076954/184534422-38a79dd8-14e5-43ee-b4f1-718e5cab1012.png)
 
-  - Tes `nginx` untuk memverifikasi perubahan yang dibuat
-  - 
-  - Menghapus semua resource dan mengecek file test.html
+  - Melihat file `index.html` yang ada di dalam container nginx
   
   ```console
-  kubectl delete deploy nfs-nginx
-  kubectl delete pvc nf-pvc
-  kubectl delete svc nfs-nginx
+  kubectl exec -it nginx-with-pvc-6ccbd669c8-lvz6s bash
+  cat /usr/share/nginx/html/index.html
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184509332-63c5eb2e-68df-458b-8554-f0a5b3a54df8.png)
+  ![image](https://user-images.githubusercontent.com/89076954/184534635-2eec7f15-f3e0-494f-a5e7-acebfcc31c36.png)
 
-  - 
+  - Menghapus semua resource menggunakan `kustomization` dan mengecek file `index.html`
+  
+  ```console
+  sudo nano kustomization.yaml
+  kubectl delete -k ./
+  cat /data/index.html
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184534728-f9a30e79-fdf5-4f45-a8dd-8b521b5e5885.png)
   
   Dynamic NFS provisioning
   
