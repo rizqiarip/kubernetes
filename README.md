@@ -316,7 +316,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
 ## Membuat Dynamic Storage Class dengan NFS
 
   
-  - Menginstal NFS server
+  - Menginstal dan mengaktifkan paket `nfs`
   
   ```console
   sudo apt-get update
@@ -325,6 +325,8 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   sudo systemctl status nfs-server
   ```
   
+  ![image](https://user-images.githubusercontent.com/89076954/184544138-f5df5234-591d-4e3f-b305-960b2c000265.png)
+
   - Membuat dan Mengekspor direktori dengan menambah baris baru pada file `/etc/exports`
   
   ```console
@@ -337,7 +339,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184535054-4634dc2a-f812-43a9-9f66-022c386f270e.png)
   
-  - Me *mounting* nfs melalui ssh
+  - Me *mounting* direktori `/data` melalui ssh
   
   ```console
   minikube ip
@@ -348,7 +350,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184533014-4dd58062-8ba6-4679-9d7c-834f1396f59d.png)
   
-  - Membuat file bernama nfs.yaml untuk membuat `persistence volume`
+  - Membuat file bernama nfs.yaml untuk membuat `persistentvolume` dengan isi sebagai berikut:
   
   ```
   apiVersion: v1
@@ -368,7 +370,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
       path: "/data"
   ```
   
-  - Mendeploy dan memverifikasi `persistent volume` nfs 
+  - Mendeploy dan memverifikasi `persistent volume` bernama nfs-pv
   
   ```console
   kubectl apply -f nfs.yaml
@@ -377,7 +379,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184533168-4829d75b-68e5-4558-b184-a6088a9b76cd.png)
 
-  - Membuat file bernama nfs_pvc.yaml untuk membuat `persistence volume claim` 
+  - Membuat file bernama nfs_pvc.yaml untuk membuat `persistentvolumeclaim` 
   
   ```
   apiVersion: v1
@@ -393,7 +395,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
       storage: 50Mi
   ```
   
-  - Mendeploy dan memverifikasi `persistent volume claim` nfs
+  - Mendeploy dan memverifikasi `persistentvolumeclaim` bernama nfs-pvc
   
   ```console
   kubectl apply -f nfs_pvc.yaml
@@ -402,7 +404,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184533378-62e1abb2-502c-4dfa-abd3-27a4d5032c8f.png)
   
-  - Membuat file deployment `nginx` dengan pvc `nfs-pvc` dan mountpath `/usr/share/nginx/html` bernama nginx.yaml
+  - Membuat file deployment bernama nginx.yaml yang menggunakan nfs-pvc sebagai `persistentvolumeclaim` dan mountpath pada direktori `/usr/share/nginx/html`
   
   ```
   apiVersion: apps/v1
@@ -455,7 +457,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   status: {}  
   ```
 
-  - Mendeploy dan memverifikasi `nginx` melalui file `nginx.yaml`
+  - Mendeploy dan memverifikasi `pod`
   
   ```console
   kubectl apply -f nginx.yaml
@@ -464,7 +466,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184534277-2a69ef73-0b0a-4a7f-b5d1-d6d01e6825fd.png)
 
-  - Membuat file bernama nginx-svc.yaml untuk membuat `service` bernama nginx-server 
+  - Membuat file bernama nginx-svc.yaml untuk mengekspos deployment
   
   ```
   apiVersion: v1
@@ -480,7 +482,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
       app: nginx
   ```
   
-  - Mendeploy dan memverifikasi `service` melalui file nginx-svc.yaml
+  - Mendeploy dan memverifikasi `service`
   
   ```console
   kubectl apply -f nginx-svc.yaml
@@ -489,11 +491,15 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184534285-e89b9633-978b-4996-9ea5-6cdcc95dc36c.png)
 
-  - Membuat file `index.html` pada direktori `/data`
+  - Membuat file index.html pada direktori `/data`
+  
+  ```console
+  sudo nano /data/index.html
+  ```
   
   ![image](https://user-images.githubusercontent.com/89076954/184533740-f7b2b8ac-cfd1-497a-97ba-6f0f8f096839.png)
 
-  - Tes `nginx` yang telah dibuat menggunakan perintah curl
+  - Tes akses deployment `nginx` yang telah dibuat menggunakan perintah curl
   
    ```console
    minikube service nginx-server --url
@@ -502,7 +508,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
    
    ![image](https://user-images.githubusercontent.com/89076954/184534357-6e13a4a0-52a2-4c61-a4d2-848a7e3e6118.png)
 
-  - Testing nfs dengan mengubah file `index.html` pada direktori `/data` dan mengakses ulang `nginx`
+  - Tes nfs dengan mengubah file `index.html` pada direktori `/data` dan mengakses ulang `nginx`
   
   ```console
   sudo nano /data/index.html
