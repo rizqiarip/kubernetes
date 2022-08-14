@@ -5,6 +5,10 @@ Dokumentasi Lab Kubernetes Orchestration Container oleh Rizqi Arif Wibowo - 11 A
 ## Topologi Arsitektur Kubernetes
   
   Gambar topologi arsitektur kubernetes
+  
+![Topologi Kubernetes](https://user-images.githubusercontent.com/89076954/184551326-226241df-0aa0-40ce-bb2b-70a015e314df.png)
+
+Referensi : https://sahl.run/blog/arsitektur-kubernetes
 
 ## Instalasi Minikube menggunakan driver kvm2
 
