@@ -334,8 +334,8 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
   showmount -e
   ```
   
-  ![image](https://user-images.githubusercontent.com/89076954/184532626-fcb58849-7124-4c98-bcc2-89091ee975c4.png)
-
+  ![image](https://user-images.githubusercontent.com/89076954/184535054-4634dc2a-f812-43a9-9f66-022c386f270e.png)
+  
   - Me *mounting* nfs melalui ssh
   
   ```console
