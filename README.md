@@ -709,44 +709,109 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
   
   ![image](https://user-images.githubusercontent.com/89076954/184541842-6454f290-d906-4e93-bdb7-b4ccf00b5aae.png)
 
-  - Membuat file bernama test-claim.yaml untuk membuat `persistentvolume` 
+  - Membuat file bernama pv.yaml untuk membuat `persistentvolume` 
   
   ```
-
-  ```
-
-  - Mendeploy dan memverifikasi class.yaml
-  
-  ```console
-  kubectl apply -f class.yaml
-  kubectl get sc
-  ```
-
-  - Membuat file bernama class.yaml untuk membuat `storageclass` 
-  
-  ```
-  apiVersion: storage.k8s.io/v1
-  kind: StorageClass
+  apiVersion: v1
+  kind: PersistentVolume
   metadata:
-    name: managed-nfs-storage
-  provisioner: fuseim.pri/ifs 
-  parameters:
-    archiveOnDelete: "false"
-
+    name: nfs-pv
+    labels:
+      name: mynfs
+  spec:
+    storageClassName: managed-nfs-storage
+    capacity:
+      storage: 200Mi
+    accessModes:
+      - ReadWriteMany
+    nfs:
+      server: 192.168.39.1
+      path: "/data2"
   ```
 
-  - Mendeploy dan memverifikasi class.yaml
+  - Mendeploy dan memverifikasi pv.yaml
   
   ```console
-  kubectl apply -f class.yaml
-  kubectl get sc
+  kubectl apply -f pv.yaml
+  kubectl get pv
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184542159-e4679565-456c-4898-9f55-6ea79c2e394e.png)
+
+  - Membuat file bernama test-claim.yaml untuk membuat `persistentvolumeclaim` 
+  
+  ```
+  kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: test-claim
+    annotations:
+      volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+  spec:
+    storageClassName: managed-nfs-storage
+    accessModes:
+      - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Mi
   ```
 
-  -
+  - Mendeploy dan memverifikasi `persistentvolumeclaim`
   
+  ```console
+  kubectl apply -f test-claim.yaml
+  kubectl get pvc
+  ```
+
+  ![image](https://user-images.githubusercontent.com/89076954/184542227-61dab3c8-761c-4f8b-8276-1bbd80213c98.png)
+
+  - Membuat file bernama test-pod.yaml untuk membuat `busybox` yang bertugas membuat file bernama SUCCESS ke dalam direktori `/mnt` yang terhubung juga dengan direktori `/data2`
   
+  ```
+  kind: Pod
+  apiVersion: v1
+  metadata:
+    name: test-pod
+  spec:
+    containers:
+    - name: test-pod
+      image: gcr.io/google_containers/busybox:1.24
+      command:
+        - "/bin/sh"
+      args:
+        - "-c"
+        - "touch /mnt/SUCCESS && exit 0 || exit 1"
+      volumeMounts:
+        - name: nfs-pvc
+          mountPath: "/mnt"
+    restartPolicy: "Never"
+    volumes:
+      - name: nfs-pvc
+        persistentVolumeClaim:
+          claimName: test-claim
+  ```
   
+  - Mendeploy dan memverifikasi `pod`
   
+  ```console
+  kubectl apply -f test-pod.yaml
+  kubectl get pod
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184542509-5ebc31da-4103-4694-a778-e493b81befbc.png)
+
+  - Melihat isi direktori '/data2'
+  
+  ```console
+  ls /data2
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/89076954/184542580-8f0989b0-1f01-4430-ad21-333d98896e3f.png)
+
+Referensi : https://medium.com/@myte/kubernetes-nfs-and-dynamic-nfs-provisioning-97e2afb8b4a9
+            https://github.com/kubernetes-retired/external-storage/tree/master/nfs-client
+            https://en.cdmana.com/2022/185/202207040708159405.html#2waiting_for_a_volume_to_be_created_either_by_external_provisioner_fuseimpriifs_or_manually_created_by_system_administrator_337
+
 
 ## Deploy Aplikasi Wordpress dan MySQL menggunakan Persistent Volume Claim (PVC)
 
