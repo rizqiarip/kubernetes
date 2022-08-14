@@ -311,7 +311,7 @@ Referensi : https://computingforgeeks.com/how-to-run-minikube-on-kvm/#:~:text=To
   
   ![image](https://user-images.githubusercontent.com/89076954/184493435-7ef951ef-ba33-4b81-8c0b-217ff6b1845f.png)
 
-Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/] (https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
+Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/
 
 ## Membuat Dynamic Storage Class dengan NFS
 
