@@ -314,6 +314,8 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
 
 ## Membuat Dynamic Storage Class dengan NFS
 
+Membuat nfs dengan ip server 192.168.39.192 path = /data
+
   - Menginstal NFS dan membuat direktori dimana nfs menyimpan file
   
   ```console
@@ -321,7 +323,7 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
   sudo apt install nfs-kernel-server nfs-common portmap
   sudo systemctl start nfs-server
   sudo systemctl status nfs-server
-  mkdir -p /srv/nfs/mydata 
+  mkdir -p /data 
   chmod -R 777 /srv/nfs/
   ```
   
@@ -474,7 +476,9 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
   
   Dynamic NFS provisioning
   
+  Masalah dengan metode sebelumnya adalah bahwa seseorang harus membuat setiap volume persistensi untuk semua permintaan pvc, yang dapat memakan waktu. Cara untuk mengatasi ini adalah dengan memiliki klien NFS yang secara otomatis akan melakukannya untuk kami. Meminta klaim volume persistensi secara otomatis akan memicu pembuatan volume persistensi. Agar hal ini terjadi, klien NFS harus diinstal di kluster kubernetes, dan akses harus diberikan kepada klien menggunakan akun layanan.
   
+  -
   
   
   
