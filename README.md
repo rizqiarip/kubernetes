@@ -324,7 +324,7 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
   sudo systemctl status nfs-server
   ```
   
-  - Membuat dan Mengekspor direktori dengan menambah baris baru pada file /etc/exports
+  - Membuat dan Mengekspor direktori dengan menambah baris baru pada file `/etc/exports`
   
   ```console
   mkdir -p /data
@@ -365,8 +365,7 @@ Referensi : [https://kubernetes.io/docs/tasks/access-application-cluster/ingress
     nfs:
       server: 192.168.39.1
       path: "/data"
-
-    ```
+  ```
   
   - Mendeploy dan memverifikasi `persistent volume` nfs 
   
