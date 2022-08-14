@@ -518,7 +518,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184534422-38a79dd8-14e5-43ee-b4f1-718e5cab1012.png)
 
-  - Melihat file `index.html` yang ada di dalam container nginx
+  - Melihat file `index.html` yang ada di dalam container `nginx`
   
   ```console
   kubectl exec -it nginx-with-pvc-6ccbd669c8-lvz6s bash
@@ -537,9 +537,9 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184534728-f9a30e79-fdf5-4f45-a8dd-8b521b5e5885.png)
   
-  ###Dynamic NFS provisioning
+  ### Dynamic NFS
   
-  - Membuat dan Mengekspor direktori dengan menambah baris baru pada file `/etc/exports`
+  - Membuat dan Mengekspor direktori `/data2` dengan menambah baris baru pada file `/etc/exports`
   
   ```console
   mkdir -p /data2
@@ -562,7 +562,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184540846-8d737ef4-e7dd-4676-8b4d-2496f063a653.png)
   
-  - Membuat file bernama rbac.yaml untuk membuat `serviceaccount`, `clusterrole`, `clusterrolebinding`, `role`, dan `rolebinding`
+  - Membuat file bernama rbac.yaml yang berisi deployment untuk `serviceaccount`, `clusterrole`, `clusterrolebinding`, `role`, dan `rolebinding`
   
   ```
   apiVersion: v1
@@ -627,7 +627,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
     apiGroup: rbac.authorization.k8s.io
   ```
   
-  - Mendeploy dan memverifikasi rbac.yaml 
+  - Mendeploy file rbac.yaml 
   
   ```console
   kubectl apply -f rbac.yaml
@@ -635,7 +635,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184541484-0bdef4cb-8c61-4c86-a9bc-ac0e8b9f10bc.png)
 
-  - Membuat file bernama deployment.yaml
+  - Membuat file deployment.yaml berisi deployment nfs client provisioner
   
   ```
   apiVersion: apps/v1
@@ -678,7 +678,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
               path: /data2
   ```
 
-  - Mendeploy dan memverifikasi deployment.yaml
+  - Mendeploy file deployment.yamssdsssssss
   
   ```console
   kubectl apply -f deployment.yaml
