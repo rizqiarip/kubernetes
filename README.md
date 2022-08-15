@@ -1091,7 +1091,7 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
   
   ![image](https://user-images.githubusercontent.com/89076954/184503279-207eef4b-b1aa-4c81-836d-8587ea140c06.png)
 
-### Deploy Aplikasi Nginx dengan ekspos akses Load Balancer
+## Deploy Aplikasi Nginx dengan ekspos akses Load Balancer
 
   - Membuat deployment bernama `nginx` dengan image nginx
   
