@@ -344,7 +344,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184535054-4634dc2a-f812-43a9-9f66-022c386f270e.png)
   
-  - Me *mounting* direktori `/data` melalui ssh
+  - Me *mounting* direktori `/data` ke dalam node melalui ssh
   
   ```console
   minikube ip
@@ -556,7 +556,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184540869-631a4f1b-ef7e-4444-ad50-f8338221e70f.png)
   
-  - Me *mounting* nfs melalui ssh
+  - Me *mounting* direktori `/data2` ke dalam node melalui ssh
   
   ```console
   minikube ip
