@@ -319,6 +319,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
 
 ## Membuat Dynamic Storage Class dengan NFS
 
+  ### Membuat Manual Storage menggunakan NFS
   
   - Menginstal dan mengaktifkan paket `nfs`
   
@@ -541,7 +542,7 @@ Referensi : https://kubernetes.io/docs/tasks/access-application-cluster/ingress-
   
   ![image](https://user-images.githubusercontent.com/89076954/184534728-f9a30e79-fdf5-4f45-a8dd-8b521b5e5885.png)
   
-  ### Dynamic NFS
+  ### Membuat Dynamic Storage menggunakan NFS
   
   - Membuat dan Mengekspor direktori `/data2` dengan menambah baris baru pada file `/etc/exports`
   
