@@ -1107,7 +1107,7 @@ Referensi : [https://kubernetes.io/docs/tutorials/stateful-application/mysql-wor
   
   ![image](https://user-images.githubusercontent.com/89076954/184503426-a0eafed2-e851-477c-9608-8d62ff8a6960.png)
 
-  - Mengekspos `deployment` nginx dengan tipe loadBalancer
+  - Mengekspos `deployment` nginx dengan tipe loadBalancer dan port 80 (port default nginx)
 
   ```console
   kubectl expose deploy nginx --type LoadBalancer --port 80
